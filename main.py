@@ -48,6 +48,7 @@ db.execute('''
     nickname text,
     avatar text not null,
     exp numeric not null)''')
+conn.commit()
 
 # 获取帖子目录
 # 帖子目录（吧主页）仅采集web端
