@@ -49,7 +49,8 @@ db.execute('''
     avatar text not null,
     exp numeric not null)''')
 
-# get thread list
+# 获取帖子目录
+# 帖子目录（吧主页）仅采集web端
 Path("./proma-raw/threads").mkdir(parents=True, exist_ok=True)
 
 headers = {
@@ -93,8 +94,11 @@ for i in range(1, MAX_PAGE + 1):
     with open('./proma-raw/threads/{}.html'.format(i), 'wb') as f:
         f.write(content)
 
-# get posts
+# 获取帖子内容
 Path("./proma-raw/posts").mkdir(parents=True, exist_ok=True)
 Path("./proma-raw/comments").mkdir(parents=True, exist_ok=True)
 
-# fix up user table
+# 补完user表
+
+# 补完post表
+# 正文一列采用web端作为数据源，其余采用移动端
