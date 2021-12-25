@@ -1,3 +1,4 @@
+import hashlib
 import time
 import sqlite3
 import requests
@@ -98,6 +99,34 @@ for i in range(1, MAX_PAGE + 1):
 # 获取帖子内容
 Path("./proma-raw/posts").mkdir(parents=True, exist_ok=True)
 Path("./proma-raw/comments").mkdir(parents=True, exist_ok=True)
+
+# 以下函数用于从移动端接口获取数据
+def add_sign(data):
+    _ = ""
+    keys = sorted(data.keys())
+    for key in keys:
+        _ += key + "=" + data[key]
+    sign = hashlib.md5((_ + 'tiebaclient!!!').encode("utf-8")).hexdigest().upper()
+    data.update({"sign": str(sign)})
+    return data
+
+
+def get_thread(thread_id, post_id=None):
+    # 获取帖子内容的移动端接口没有翻页参数，只能通过指定最后一层楼的post_id，来获取这一层楼往后的30层楼，以此达到翻页效果
+    if post_id is None:
+        data = {'kz': thread_id, '_client_version': '9.9.8.32'}
+    else:
+        data = {'kz': thread_id, 'pid': str(post_id), '_client_version': '9.9.8.32'}
+    data = add_sign(data)
+    resp = requests.post('https://tieba.baidu.com/c/f/pb/page', data=data)
+    return resp
+
+
+def get_comment(thread_id, post_id, page):
+    data = {'kz': thread_id, 'pid': str(post_id), 'pn': str(page), '_client_version': '9.9.8.32'}
+    data = add_sign(data)
+    resp = requests.post('https://tieba.baidu.com/c/f/pb/floor', data=data)
+    return resp
 
 # 补完user表
 
