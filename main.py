@@ -103,6 +103,7 @@ Path("./proma-raw/comments").mkdir(parents=True, exist_ok=True)
 
 # 以下函数用于从移动端接口获取数据
 def add_sign(data):
+    # 特别鸣谢 https://github.com/cnwangjihe/TiebaBackup
     _ = ""
     keys = sorted(data.keys())
     for key in keys:
