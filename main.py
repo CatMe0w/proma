@@ -124,6 +124,8 @@ def get_post_mobile(thread_id, pseudo_page, post_id=None):
         data = {'kz': thread_id, 'pid': str(post_id), '_client_version': '9.9.8.32'}
     data_signed = add_sign(data)
     resp = requests.post('https://tieba.baidu.com/c/f/pb/page', data=data_signed)
+    with open('./proma-raw/mobile/posts/{}/{}.json'.format(thread_id, pseudo_page), 'wb') as f:
+        f.write(resp.content)
     return resp
 
 
@@ -131,6 +133,8 @@ def get_comment_mobile(thread_id, post_id, page):
     data = {'kz': thread_id, 'pid': str(post_id), 'pn': str(page), '_client_version': '9.9.8.32'}
     data_signed = add_sign(data)
     resp = requests.post('https://tieba.baidu.com/c/f/pb/floor', data=data_signed)
+    with open('./proma-raw/mobile/comments/{}/{}/{}.json'.format(thread_id, post_id, page), 'wb') as f:
+        f.write(resp.content)
     return resp
 
 
@@ -140,6 +144,8 @@ def get_post_web(thread_id, page):
         ('pn', str(page)),
     )
     resp = requests.get('https://tieba.baidu.com/p/' + str(thread_id), headers=headers, params=params)
+    with open('./proma-raw/web/posts/{}/{}.json'.format(thread_id, page), 'wb') as f:
+        f.write(resp.content)
     return resp
 
 
@@ -150,6 +156,8 @@ def get_totalcomment_web(thread_id, page):
         ('pn', str(page)),
     )
     resp = requests.get('https://tieba.baidu.com/p/totalComment', headers=headers, params=params)
+    with open('./proma-raw/web/totalcomments/{}/{}.json'.format(thread_id, page), 'wb') as f:
+        f.write(resp.content)
     return resp
 
 
@@ -161,6 +169,8 @@ def get_comment_web(thread_id, post_id, page):
         ('pn', str(page)),
     )
     resp = requests.get('https://tieba.baidu.com/p/comment', headers=headers, params=params)
+    with open('./proma-raw/web/comments/{}/{}/{}.json'.format(thread_id, post_id, page), 'wb') as f:
+        f.write(resp.content)
     return resp
 
 # 补完user表
