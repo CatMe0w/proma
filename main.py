@@ -169,7 +169,7 @@ def get_comment_web(thread_id, post_id, page):
         ('pn', str(page)),
     )
     resp = requests.get('https://tieba.baidu.com/p/comment', headers=headers, params=params)
-    with open('./proma-raw/web/comments/{}/{}/{}.json'.format(thread_id, post_id, page), 'wb') as f:
+    with open('./proma-raw/web/comments/{}/{}/{}.html'.format(thread_id, post_id, page), 'wb') as f:
         f.write(resp.content)
     return resp
 
