@@ -100,6 +100,7 @@ for i in range(1, MAX_PAGE + 1):
 Path("./proma-raw/posts").mkdir(parents=True, exist_ok=True)
 Path("./proma-raw/comments").mkdir(parents=True, exist_ok=True)
 
+
 # 以下函数用于从移动端接口获取数据
 def add_sign(data):
     _ = ""
@@ -111,21 +112,51 @@ def add_sign(data):
     return data
 
 
-def get_thread(thread_id, post_id=None):
+def get_thread_mobile(thread_id, post_id=None):
     # 获取帖子内容的移动端接口没有翻页参数，只能通过指定最后一层楼的post_id，来获取这一层楼往后的30层楼，以此达到翻页效果
     if post_id is None:
         data = {'kz': thread_id, '_client_version': '9.9.8.32'}
     else:
         data = {'kz': thread_id, 'pid': str(post_id), '_client_version': '9.9.8.32'}
-    data = add_sign(data)
-    resp = requests.post('https://tieba.baidu.com/c/f/pb/page', data=data)
+    data_signed = add_sign(data)
+    resp = requests.post('https://tieba.baidu.com/c/f/pb/page', data=data_signed)
     return resp
 
 
-def get_comment(thread_id, post_id, page):
+def get_comment_mobile(thread_id, post_id, page):
     data = {'kz': thread_id, 'pid': str(post_id), 'pn': str(page), '_client_version': '9.9.8.32'}
-    data = add_sign(data)
-    resp = requests.post('https://tieba.baidu.com/c/f/pb/floor', data=data)
+    data_signed = add_sign(data)
+    resp = requests.post('https://tieba.baidu.com/c/f/pb/floor', data=data_signed)
+    return resp
+
+
+# 以下函数用于从网页端（电脑版）获取数据
+def get_thread_web(thread_id, page):
+    params = (
+        ('pn', str(page)),
+    )
+    resp = requests.get('https://tieba.baidu.com/p/' + str(thread_id), headers=headers, params=params)
+    return resp
+
+
+def get_totalcomment_web(thread_id, page):
+    # "totalComment"是在帖子加载时就立即发送的XHR，返回内容为这一页中，每一个楼中楼的前10条回复，格式为JSON
+    params = (
+        ('tid', str(thread_id)),
+        ('pn', str(page)),
+    )
+    resp = requests.get('https://tieba.baidu.com/p/totalComment', headers=headers, params=params)
+    return resp
+
+
+def get_comment_web(thread_id, post_id, page):
+    # 获取特定楼中楼某一页的回复，格式为HTML
+    params = (
+        ('tid', str(thread_id)),
+        ('pid', str(post_id)),
+        ('pn', str(page)),
+    )
+    resp = requests.get('https://tieba.baidu.com/p/comment', headers=headers, params=params)
     return resp
 
 # 补完user表
