@@ -1,8 +1,7 @@
-import time
 import sqlite3
-import requests
-import util.crawler as crawler
 from pathlib import Path
+
+import util.crawler as crawler
 
 TIEBA_NAME = ''
 MAX_PAGE = 1
