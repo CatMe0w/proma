@@ -1,7 +1,6 @@
 import sqlite3
-from pathlib import Path
-
 import util.crawler as crawler
+from pathlib import Path
 
 TIEBA_NAME = ''
 MAX_PAGE = 1
