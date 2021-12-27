@@ -85,6 +85,8 @@ for i in range(1, MAX_PAGE + 1):
         try:
             print("Current page: threads, {} of {}".format(i, MAX_PAGE))
             response = requests.get('https://tieba.baidu.com/f', headers=headers, params=params)
+            if response.status_code is not 200:
+                raise NotImplementedError
         except requests.exceptions.Timeout:
             print("Remote is not responding, sleep for 30s.")
             time.sleep(30)
