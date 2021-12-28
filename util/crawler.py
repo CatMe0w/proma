@@ -26,7 +26,7 @@ def nice_get(url, headers=None, params=None):
     while True:
         try:
             response = requests.get(url, headers=headers, params=params)
-            if response.status_code is not 200:
+            if response.status_code != 200:
                 raise NotImplementedError
         except requests.exceptions.Timeout:
             print("Remote is not responding, sleep for 30s.")
@@ -40,7 +40,7 @@ def nice_post(url, data=None):
     while True:
         try:
             response = requests.post(url, data=data)
-            if response.status_code is not 200:
+            if response.status_code != 200:
                 raise NotImplementedError
         except requests.exceptions.Timeout:
             print("Remote is not responding, sleep for 30s.")
