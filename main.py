@@ -1,6 +1,7 @@
 import sqlite3
 import util.crawler as crawler
 from pathlib import Path
+from bs4 import BeautifulSoup, Comment
 
 TIEBA_NAME = ''
 MAX_PAGE = 1
@@ -68,6 +69,8 @@ for page in range(1, MAX_PAGE + 1):
     with open('./proma-raw/threads/{}.html'.format(page), 'wb') as f:
         f.write(content)
 
+    soup = BeautifulSoup(content, 'lxml')
+    comments = soup.find_all(text=lambda text: isinstance(text, Comment))
 # 获取帖子内容
 
 # 补完user表
