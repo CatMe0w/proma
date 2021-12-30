@@ -71,6 +71,27 @@ for page in range(1, MAX_PAGE + 1):
 
     soup = BeautifulSoup(content, 'lxml')
     comments = soup.find_all(text=lambda text: isinstance(text, Comment))
+    thread_list_html = comments[0]  # placeholder
+    thread_list_soup = BeautifulSoup(thread_list_html, 'lxml')
+
+    reply_num_html = thread_list_soup.find_all('span', class_='threadlist_rep_num')
+    reply_nums = []
+    for reply_num in reply_num_html:
+        reply_nums.append(reply_num.text)
+
+    title_html = thread_list_soup.find_all('a', class_='j_th_tit')
+    titles = []
+    thread_ids = []
+    for title in title_html:
+        titles.append(title.text)
+        thread_ids.append(title['href'].strip('/p/'))
+
+    username_html = soup.find_all('a', class_='frs-author-name')
+    usernames = []
+    for username in username_html:
+        username = username['data-field'].strip('{\"un":\"').split('\",\"id')[0]
+        usernames.append(username)
+
 # 获取帖子内容
 
 # 补完user表
