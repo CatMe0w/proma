@@ -52,7 +52,7 @@ conn.commit()
 
 # 获取帖子目录
 # 帖子目录（吧主页）仅采集web端
-Path("./proma-raw/web/threads").mkdir(parents=True, exist_ok=True)
+Path("./proma-raw/thread_lists").mkdir(parents=True, exist_ok=True)
 
 for page in range(1, MAX_PAGE + 1):
     pn_param = (page - 1) * 50
@@ -66,7 +66,7 @@ for page in range(1, MAX_PAGE + 1):
     response = crawler.nice_get('https://tieba.baidu.com/f', headers=crawler.STANDARD_HEADERS, params=params)
 
     content = response.content
-    with open('./proma-raw/threads/{}.html'.format(page), 'wb') as f:
+    with open('./proma-raw/thread_lists/{}.html'.format(page), 'wb') as f:
         f.write(content)
 
     soup = BeautifulSoup(content, 'lxml')
