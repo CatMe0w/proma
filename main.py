@@ -1,3 +1,4 @@
+import json
 import sqlite3
 import util.crawler as crawler
 from pathlib import Path
@@ -91,6 +92,12 @@ for page in range(1, MAX_PAGE + 1):
     for username in username_html:
         username = username['data-field'].strip('{\"un":\"').split('\",\"id')[0]
         usernames.append(username)
+
+    thread_entry_html = thread_list_soup.find_all('li', class_='j_thread_list')
+    is_goods = []
+    for is_good in thread_entry_html:
+        data_field = json.loads(is_good['data-field'])
+        is_goods.append(int(data_field['is_good']))
 
 # 获取帖子内容
 
