@@ -45,7 +45,8 @@ db.execute('''
     foreign key(post_id) references post(id))''')
 db.execute('''
     create table user(
-    username text not null,
+    id numeric not null,
+    username text,
     nickname text,
     avatar text not null,
     exp numeric not null)''')
