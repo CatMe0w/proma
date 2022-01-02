@@ -70,9 +70,10 @@ for page in range(1, MAX_PAGE + 1):
     with open('./proma-raw/thread_lists/{}.html'.format(page), 'wb') as f:
         f.write(content)
 
-    soup = BeautifulSoup(content, 'lxml')
+    soup = BeautifulSoup(content, 'html.parser')
+    # 此处必须使用html.parser而非lxml：原始HTML将所有帖子内容注释，lxml会直接丢弃这些包含HTML的注释块
     comments = soup.find_all(text=lambda text: isinstance(text, Comment))
-    thread_list_html = comments[0]  # placeholder
+    thread_list_html = comments[40]
     thread_list_soup = BeautifulSoup(thread_list_html, 'lxml')
 
     reply_num_html = thread_list_soup.find_all('span', class_='threadlist_rep_num')
