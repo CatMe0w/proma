@@ -77,29 +77,20 @@ for page in range(1, MAX_PAGE + 1):
     thread_list_html = comments[40]
     thread_list_soup = BeautifulSoup(thread_list_html, 'lxml')
 
-    reply_num_html = thread_list_soup.find_all('span', class_='threadlist_rep_num')
-    reply_nums = []
-    for reply_num in reply_num_html:
-        reply_nums.append(reply_num.text)
+    thread_entry_html = thread_list_soup.find_all('li', class_='j_thread_list')
+    thread_entries = []
+    for thread_entry in thread_entry_html:
+        data_field = json.loads(thread_entry['data-field'])
+        thread_entries.append(data_field)
 
     title_html = thread_list_soup.find_all('a', class_='j_th_tit')
-    titles = []
-    thread_ids = []
-    for title in title_html:
-        titles.append(title.text)
-        thread_ids.append(title['href'].strip('/p/'))
+    for title, i in zip(title_html, range(len(title_html))):
+        thread_entries[i].update({'title': title})
 
-    username_html = soup.find_all('a', class_='frs-author-name')
-    usernames = []
-    for username in username_html:
-        username = username['data-field'].strip('{\"un":\"').split('\",\"id')[0]
-        usernames.append(username)
-
-    thread_entry_html = thread_list_soup.find_all('li', class_='j_thread_list')
-    is_goods = []
-    for is_good in thread_entry_html:
-        data_field = json.loads(is_good['data-field'])
-        is_goods.append(int(data_field['is_good']))
+    user_id_html = soup.find_all('span', class_='tb_icon_author')
+    for user_id, i in zip(user_id_html, range(len(user_id_html))):
+        user_id_dict = json.loads(user_id['data-field'])
+        thread_entries[i].update(user_id_dict)
 
 # 获取帖子内容
 
