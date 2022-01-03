@@ -52,12 +52,12 @@ def nice_post(url, data=None):
 
 # 以下函数用于从移动端接口获取数据
 def add_sign(data):
-    # 特别鸣谢 https://github.com/cnwangjihe/TiebaBackup
     _ = ""
-    keys = sorted(data.keys())
-    for key in keys:
-        _ += key + "=" + data[key]
-    sign = hashlib.md5((_ + 'tiebaclient!!!').encode('utf-8')).hexdigest().upper()
+    for (k, v) in sorted(data.items()):
+        _ += (k + "=" + v)
+    _ += 'tiebaclient!!!'
+
+    sign = hashlib.md5(_.encode('utf-8')).hexdigest().upper()
     data.update({"sign": str(sign)})
     return data
 
