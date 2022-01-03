@@ -68,9 +68,16 @@ def get_post_mobile(thread_id, pseudo_page, post_id=None):
     print('Current page: posts, thread_id {}, page {}, using mobile api'.format(thread_id, pseudo_page))
 
     if post_id is None:
-        data = {'kz': thread_id, '_client_version': '9.9.8.32'}
+        data = {
+            'kz': str(thread_id),
+            '_client_version': '9.9.8.32'
+        }
     else:
-        data = {'kz': thread_id, 'pid': str(post_id), '_client_version': '9.9.8.32'}
+        data = {
+            'kz': str(thread_id),
+            'pid': str(post_id),
+            '_client_version': '9.9.8.32'
+        }
     data_signed = add_sign(data)
     response = nice_post('https://tieba.baidu.com/c/f/pb/page', data=data_signed)
     with open('./proma-raw/posts/mobile/{}/{}.json'.format(thread_id, pseudo_page), 'wb') as f:
@@ -82,7 +89,12 @@ def get_comment_mobile(thread_id, post_id, page):
     Path('./proma-raw/comments/mobile').mkdir(parents=True, exist_ok=True)
     print('Current page: comments, thread_id {}, post_id {}, page {}, using mobile api'.format(thread_id, post_id, page))
 
-    data = {'kz': thread_id, 'pid': str(post_id), 'pn': str(page), '_client_version': '9.9.8.32'}
+    data = {
+        'kz': str(thread_id),
+        'pid': str(post_id),
+        'pn': str(page),
+        '_client_version': '9.9.8.32'
+    }
     data_signed = add_sign(data)
     response = nice_post('https://tieba.baidu.com/c/f/pb/floor', data=data_signed)
     with open('./proma-raw/comments/mobile/{}/{}/{}.json'.format(thread_id, post_id, page), 'wb') as f:
