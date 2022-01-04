@@ -92,6 +92,21 @@ for page in range(1, MAX_PAGE + 1):
         user_id_dict = json.loads(user_id['data-field'])
         thread_entries[i].update(user_id_dict)
 
+    for thread_entry in thread_entries:
+        db.execute('insert into user values (?,?,?,?)', (
+            thread_entry['user_id'],
+            thread_entry['author_name'],
+            thread_entry['author_nickname'],
+            thread_entry['author_portrait']
+        ))
+        db.execute('insert into thread values (?,?,?,?,?)', (
+            thread_entry['id'],
+            thread_entry['title'],
+            thread_entry['user_id'],
+            thread_entry['reply_num'],
+            thread_entry['is_good']
+        ))
+
 # 获取帖子内容
 
 # 补完user表
