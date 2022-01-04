@@ -19,12 +19,19 @@ Weigh anchor!
 conn = sqlite3.connect('proma.db')
 db = conn.cursor()
 db.execute('''
+    create table user(
+    id numeric not null,
+    username text,
+    nickname text,
+    avatar text not null)''')
+db.execute('''
     create table thread(
     id numeric not null,
     title text not null,
-    username text not null,
+    user_id text not null,
     reply_num numeric not null,
-    is_good numeric not null)''')
+    is_good numeric not null,
+    foreign key(user_id) references user(id))''')
 db.execute('''
     create table post(
     id numeric not null,
@@ -43,13 +50,6 @@ db.execute('''
     time text not null,
     post_id numeric not null,
     foreign key(post_id) references post(id))''')
-db.execute('''
-    create table user(
-    id numeric not null,
-    username text,
-    nickname text,
-    avatar text not null,
-    exp numeric not null)''')
 conn.commit()
 
 # 获取帖子目录
