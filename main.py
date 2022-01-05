@@ -71,19 +71,16 @@ for page in range(1, MAX_PAGE + 1):
     with open('./proma-raw/thread_lists/{}.html'.format(page), 'wb') as f:
         f.write(content)
 
-    soup = BeautifulSoup(content, 'html.parser')
-    # 此处必须使用html.parser而非lxml：原始HTML将所有帖子内容注释，lxml会直接丢弃这些包含HTML的注释块
+    soup = BeautifulSoup(content, 'lxml')
     comments = soup.find_all(text=lambda text: isinstance(text, Comment))
-    thread_list_html = comments[40]
-    thread_list_soup = BeautifulSoup(thread_list_html, 'lxml')
 
-    thread_entry_html = thread_list_soup.find_all('li', class_='j_thread_list')
+    thread_entry_html = soup.find_all('li', class_='j_thread_list')
     thread_entries = []
     for thread_entry in thread_entry_html:
         data_field = json.loads(thread_entry['data-field'])
         thread_entries.append(data_field)
 
-    title_html = thread_list_soup.find_all('a', class_='j_th_tit')
+    title_html = soup.find_all('a', class_='j_th_tit')
     for title, i in zip(title_html, range(len(title_html))):
         thread_entries[i].update({'title': title})
 
