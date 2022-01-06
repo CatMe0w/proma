@@ -103,6 +103,7 @@ for page in range(1, MAX_PAGE + 1):
             thread_entry['reply_num'],
             thread_entry['is_good']
         ))
+    conn.commit()
 
 # 获取帖子内容
 
