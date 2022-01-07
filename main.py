@@ -1,3 +1,4 @@
+import math
 import json
 import sqlite3
 import util.crawler as crawler
@@ -106,6 +107,30 @@ for page in range(1, MAX_PAGE + 1):
     conn.commit()
 
 # 获取帖子内容
+thread_ids = [_[0] for _ in db.execute('select id from thread')]
+
+next_page_post_id = None
+pseudo_page = 1
+for thread_id in thread_ids:
+    response = crawler.get_post_web(thread_id, pseudo_page, next_page_post_id)
+    post_data = json.loads(response.content)
+
+    # 获取楼中楼
+    has_comment_posts = []
+    for post in post_data['post_list']:
+        if post['sub_post_number'] != 0:
+            if post['sub_post_number'] <= 10:
+                has_comment_post = {'id': post['id'], 'page': post['sub_post_number']}
+                has_comment_posts.append(has_comment_post)
+            else:
+                page = math.ceil(post['sub_post_number'] / 10)
+                has_comment_post = {'id': post['id'], 'page': page}
+                has_comment_posts.append(has_comment_post)
+    for post_id in has_comment_posts:
+        response = crawler.get_comment_mobile(thread_id, post_id, page)
+
+    next_page_post_id = post_data['post_list'][-1]['id']
+    pseudo_page += 1
 
 # 补完user表
 
