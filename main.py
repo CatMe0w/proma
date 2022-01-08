@@ -1,8 +1,10 @@
-import math
 import json
+import math
+import pytz
 import sqlite3
 import util.crawler as crawler
 from pathlib import Path
+from datetime import datetime
 from bs4 import BeautifulSoup, Comment
 
 TIEBA_NAME = ''
@@ -117,6 +119,29 @@ pseudo_page = 1
 for thread_id in thread_ids:
     response = crawler.get_post_mobile(thread_id, pseudo_page, next_page_post_id)
     post_data = json.loads(response.content)
+    for user in post_data['user_list']:
+        db.execute('insert into user values (?,?,?,?)', (
+            user['id'],
+            user['name'],
+            user['name_show'],
+            user['portrait']  # XXX
+        ))
+    for post in post_data['post_list']:
+        post_time = datetime.fromtimestamp(
+            int(post['time']),
+            pytz.timezone('Asia/Shanghai')
+        ).strftime("%Y-%m-%d %H:%M:%S")
+        db.execute('insert into post values (?,?,?,?,?,?,?,?)', (
+            post['id'],
+            post['floor'],
+            post['author_id'],
+            post['content'],  # XXX
+            post_time,
+            post['sub_post_number'],
+            None,
+            thread_id
+        ))
+    conn.commit()
 
     # 获取楼中楼
     has_comment_posts = []
