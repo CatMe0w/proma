@@ -154,6 +154,13 @@ for thread_id in thread_ids:
         response = crawler.get_comment_mobile(thread_id, post['id'], post['page'])
         comment_data = json.loads(response.content)
         for comment in comment_data['subpost_list']:
+            db.execute('insert into user values (?,?,?,?)', (
+                comment['author']['id'],
+                comment['author']['name'],
+                comment['author']['name_show'],
+                comment['author']['portrait']  # XXX
+            ))
+
             comment_time = datetime.fromtimestamp(
                 int(post['time']),
                 pytz.timezone('Asia/Shanghai')
