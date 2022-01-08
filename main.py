@@ -152,6 +152,20 @@ for thread_id in thread_ids:
             has_comment_posts.append(has_comment_post)
     for post in has_comment_posts:
         response = crawler.get_comment_mobile(thread_id, post['id'], post['page'])
+        comment_data = json.loads(response.content)
+        for comment in comment_data['subpost_list']:
+            comment_time = datetime.fromtimestamp(
+                int(post['time']),
+                pytz.timezone('Asia/Shanghai')
+            ).strftime("%Y-%m-%d %H:%M:%S")
+            db.execute('insert into comment values (?,?,?,?,?)', (
+                comment['id'],
+                comment['author']['id'],
+                comment['content'],  # XXX
+                comment_time,
+                comment_data['post']['id']
+            ))
+        conn.commit()
 
     next_page_post_id = post_data['post_list'][-1]['id']
     pseudo_page += 1
