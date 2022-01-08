@@ -177,7 +177,5 @@ for thread_id in thread_ids:
     next_page_post_id = post_data['post_list'][-1]['id']
     pseudo_page += 1
 
-# 补完user表
-
 # 补完post表
 # 正文一列采用web端作为数据源，其余采用移动端
