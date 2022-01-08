@@ -122,8 +122,8 @@ for thread_id in thread_ids:
             page = math.ceil(int(post['sub_post_number']) / 10)
             has_comment_post = {'id': post['id'], 'page': str(page)}
             has_comment_posts.append(has_comment_post)
-    for post_id in has_comment_posts:
-        response = crawler.get_comment_mobile(thread_id, post_id, page)
+    for post in has_comment_posts:
+        response = crawler.get_comment_mobile(thread_id, post['id'], post['page'])
 
     next_page_post_id = post_data['post_list'][-1]['id']
     pseudo_page += 1
