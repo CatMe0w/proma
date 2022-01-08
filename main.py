@@ -112,7 +112,7 @@ thread_ids = [_[0] for _ in db.execute('select id from thread')]
 next_page_post_id = None
 pseudo_page = 1
 for thread_id in thread_ids:
-    response = crawler.get_post_web(thread_id, pseudo_page, next_page_post_id)
+    response = crawler.get_post_mobile(thread_id, pseudo_page, next_page_post_id)
     post_data = json.loads(response.content)
 
     # 获取楼中楼
