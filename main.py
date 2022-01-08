@@ -96,7 +96,7 @@ for page in range(1, MAX_PAGE + 1):
         thread_entries[i].update(user_id_dict)
 
     for thread_entry in thread_entries:
-        db.execute('insert into user values (?,?,?,?)', (
+        db.execute('insert or ignore into user values (?,?,?,?)', (
             thread_entry['user_id'],
             thread_entry['author_name'],
             thread_entry['author_nickname'],
@@ -120,7 +120,7 @@ for thread_id in thread_ids:
     response = crawler.get_post_mobile(thread_id, pseudo_page, next_page_post_id)
     post_data = json.loads(response.content)
     for user in post_data['user_list']:
-        db.execute('insert into user values (?,?,?,?)', (
+        db.execute('insert or ignore into user values (?,?,?,?)', (
             user['id'],
             user['name'],
             user['name_show'],
@@ -154,7 +154,7 @@ for thread_id in thread_ids:
         response = crawler.get_comment_mobile(thread_id, post['id'], post['page'])
         comment_data = json.loads(response.content)
         for comment in comment_data['subpost_list']:
-            db.execute('insert into user values (?,?,?,?)', (
+            db.execute('insert or ignore into user values (?,?,?,?)', (
                 comment['author']['id'],
                 comment['author']['name'],
                 comment['author']['name_show'],
