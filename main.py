@@ -23,13 +23,13 @@ conn = sqlite3.connect('proma.db')
 db = conn.cursor()
 db.execute('''
     create table user(
-    id numeric not null,
+    id numeric primary key not null,
     username text,
     nickname text,
     avatar text not null)''')
 db.execute('''
     create table thread(
-    id numeric not null,
+    id numeric primary key not null,
     title text not null,
     user_id text not null,
     reply_num numeric not null,
@@ -37,7 +37,7 @@ db.execute('''
     foreign key(user_id) references user(id))''')
 db.execute('''
     create table post(
-    id numeric not null,
+    id numeric primary key not null,
     floor numeric not null,
     user_id text not null,
     content text,
@@ -49,7 +49,7 @@ db.execute('''
     foreign key(thread_id) references thread(id))''')
 db.execute('''
     create table comment(
-    id numeric not null,
+    id numeric primary key not null,
     user_id text not null,
     content text,
     time text not null,
