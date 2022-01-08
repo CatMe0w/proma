@@ -37,19 +37,22 @@ db.execute('''
     create table post(
     id numeric not null,
     floor numeric not null,
+    user_id text not null,
     content text,
     time text not null,
     comment_num numeric not null,
     signature text,
     thread_id numeric not null,
+    foreign key(user_id) references user(id),
     foreign key(thread_id) references thread(id))''')
 db.execute('''
     create table comment(
     id numeric not null,
-    username text not null,
+    user_id text not null,
     content text,
     time text not null,
     post_id numeric not null,
+    foreign key(user_id) references user(id),
     foreign key(post_id) references post(id))''')
 conn.commit()
 
