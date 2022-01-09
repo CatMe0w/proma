@@ -144,35 +144,38 @@ for thread_id in thread_ids:
     conn.commit()
 
     # 获取楼中楼
-    has_comment_posts = []
+    has_comment_post_ids = []
     for post in post_data['post_list']:
         if post['sub_post_number'] != 0:
-            page = math.ceil(int(post['sub_post_number']) / 27)  # 移动端的楼中楼接口，每页27条回复
-            has_comment_post = {'id': post['id'], 'page': str(page)}
-            has_comment_posts.append(has_comment_post)
-    for post in has_comment_posts:
-        response = crawler.get_comment_mobile(thread_id, post['id'], post['page'])
-        comment_data = json.loads(response.content)
-        for comment in comment_data['subpost_list']:
-            db.execute('insert or ignore into user values (?,?,?,?)', (
-                comment['author']['id'],
-                comment['author']['name'],
-                comment['author']['name_show'],
-                comment['author']['portrait']  # XXX
-            ))
+            has_comment_post_ids.append(post['id'])
+    for post_id in has_comment_post_ids:
+        current_page = 1
+        while True:
+            response = crawler.get_comment_mobile(thread_id, post_id, current_page)
+            comment_data = json.loads(response.content)
+            if not comment_data['subpost_list']:
+                break  # 正常情况下，每页楼中楼有30条评论，但经常会出现小于30的情况，因此不推测楼中楼的实际页码，一直循环到没有评论为止
+            for comment in comment_data['subpost_list']:
+                db.execute('insert or ignore into user values (?,?,?,?)', (
+                    comment['author']['id'],
+                    comment['author']['name'],
+                    comment['author']['name_show'],
+                    comment['author']['portrait']  # XXX
+                ))
 
-            comment_time = datetime.fromtimestamp(
-                int(post['time']),
-                pytz.timezone('Asia/Shanghai')
-            ).strftime("%Y-%m-%d %H:%M:%S")
-            db.execute('insert into comment values (?,?,?,?,?)', (
-                comment['id'],
-                comment['author']['id'],
-                comment['content'],  # XXX
-                comment_time,
-                comment_data['post']['id']
-            ))
-        conn.commit()
+                comment_time = datetime.fromtimestamp(
+                    int(post['time']),
+                    pytz.timezone('Asia/Shanghai')
+                ).strftime("%Y-%m-%d %H:%M:%S")
+                db.execute('insert into comment values (?,?,?,?,?)', (
+                    comment['id'],
+                    comment['author']['id'],
+                    comment['content'],  # XXX
+                    comment_time,
+                    comment_data['post']['id']
+                ))
+            conn.commit()
+            current_page += 1
 
     next_page_post_id = post_data['post_list'][-1]['id']
     pseudo_page += 1
