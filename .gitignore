@@ -2,3 +2,4 @@
 proma.db
 proma-raw
 .idea
+__pycache__
