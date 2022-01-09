@@ -122,7 +122,7 @@ for thread_id in thread_ids:
     for user in post_data['user_list']:
         db.execute('insert or ignore into user values (?,?,?,?)', (
             user['id'],
-            user['name'],
+            user.get('name'),  # IP匿名用户没有name
             user['name_show'],
             user['portrait']  # XXX
         ))
