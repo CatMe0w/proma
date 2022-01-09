@@ -164,7 +164,7 @@ for thread_id in thread_ids:
                 ))
 
                 comment_time = datetime.fromtimestamp(
-                    int(post['time']),
+                    int(comment['time']),
                     pytz.timezone('Asia/Shanghai')
                 ).strftime("%Y-%m-%d %H:%M:%S")
                 db.execute('insert into comment values (?,?,?,?,?)', (
