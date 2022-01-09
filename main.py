@@ -167,7 +167,8 @@ for thread_id in thread_ids:
                     int(comment['time']),
                     pytz.timezone('Asia/Shanghai')
                 ).strftime("%Y-%m-%d %H:%M:%S")
-                db.execute('insert into comment values (?,?,?,?,?)', (
+                db.execute('insert or ignore into comment values (?,?,?,?,?)', (
+                    # Why "or ignore": next_page_post_id这一楼层自身会重复出现一次
                     comment['id'],
                     comment['author']['id'],
                     comment['content'],  # XXX
