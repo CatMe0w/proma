@@ -1,5 +1,4 @@
 import json
-import math
 import pytz
 import sqlite3
 import util.crawler as crawler
