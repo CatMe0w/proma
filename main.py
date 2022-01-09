@@ -78,8 +78,12 @@ for page in range(1, MAX_PAGE + 1):
     with open('./proma-raw/thread_lists/{}.html'.format(page), 'wb') as f:
         f.write(content)
 
-    soup = BeautifulSoup(content, 'lxml')
+    soup = BeautifulSoup(content, 'html.parser')  # lxml在不同操作系统上的行为可能不一致
     comments = soup.find_all(text=lambda text: isinstance(text, Comment))
+    if page == 1:
+        soup = BeautifulSoup(comments[-3], 'html.parser')
+    else:
+        soup = BeautifulSoup(comments[-12], 'html.parser')
 
     thread_entry_html = soup.find_all('li', class_='j_thread_list')
     thread_entries = []
