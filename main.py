@@ -3,6 +3,7 @@ import math
 import pytz
 import sqlite3
 import util.crawler as crawler
+import util.content_parser as content_parser
 from pathlib import Path
 from datetime import datetime
 from bs4 import BeautifulSoup, Comment
@@ -135,7 +136,7 @@ for thread_id in thread_ids:
             post['id'],
             post['floor'],
             post['author_id'],
-            post['content'],  # XXX
+            content_parser.parse(post['content']),
             post_time,
             post['sub_post_number'],
             None,
@@ -171,7 +172,7 @@ for thread_id in thread_ids:
                     # Why "or ignore": next_page_post_id这一楼层自身会重复出现一次
                     comment['id'],
                     comment['author']['id'],
-                    comment['content'],  # XXX
+                    content_parser.parse(comment['content']),
                     comment_time,
                     comment_data['post']['id']
                 ))
