@@ -1,3 +1,6 @@
+import json
+
+
 def parse_url(item):
     return {'url': item['link'], 'text': item['text']}
 
@@ -34,4 +37,4 @@ def parse(data):
             parsed_data.append({'type': 'video', 'content': parse_video(item)})
         if item['type'] == '10':
             parsed_data.append({'type': 'audio', 'content': item['voice_md5']})
-    return parsed_data
+    return json.dumps(parsed_data)
