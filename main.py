@@ -101,6 +101,9 @@ for page in range(1, MAX_PAGE + 1):
         thread_entries[i].update(user_id_dict)
 
     for thread_entry in thread_entries:
+        if thread_entry['author_name'] == '':
+            thread_entry['author_name'] = None
+
         if thread_entry['is_good'] is True:
             is_good = 1
         else:
