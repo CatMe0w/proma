@@ -64,6 +64,7 @@ def add_sign(data):
 
 def get_thread_list_mobile(tieba_name, page, max_page):
     Path("./proma-raw/thread_lists").mkdir(parents=True, exist_ok=True)
+    # 从移动端接口获取帖子目录，但由于存在移动端不可见的帖子，该函数目前不再使用
     print("Current page: threads, {} of {}, using mobile api".format(page, max_page))
 
     data = {
