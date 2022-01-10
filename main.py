@@ -155,7 +155,7 @@ for thread_id in thread_ids:
     # 获取楼中楼
     has_comment_post_ids = []
     for post in post_data['post_list']:
-        if post['sub_post_number'] != 0:
+        if post['sub_post_number'] != '0':
             has_comment_post_ids.append(post['id'])
     for post_id in has_comment_post_ids:
         current_page = 1
