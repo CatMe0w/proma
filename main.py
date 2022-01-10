@@ -1,6 +1,7 @@
 import json
 import pytz
 import sqlite3
+import time
 import util.crawler as crawler
 import util.content_parser as content_parser
 from pathlib import Path
@@ -126,8 +127,15 @@ thread_ids = [_[0] for _ in db.execute('select id from thread')]
 next_page_post_id = None
 pseudo_page = 1
 for thread_id in thread_ids:
-    response = crawler.get_post_mobile(thread_id, pseudo_page, next_page_post_id)
-    post_data = json.loads(response.content)
+    while True:
+        response = crawler.get_post_mobile(thread_id, pseudo_page, next_page_post_id)
+        post_data = json.loads(response.content)
+        if post_data['error_code'] == '0':
+            break
+        else:
+            print("Bad response, sleep for 30s.")
+            time.sleep(30)
+
     for user in post_data['user_list']:
         db.execute('insert or ignore into user values (?,?,?,?)', (
             user['id'],
@@ -160,10 +168,16 @@ for thread_id in thread_ids:
     for post_id in has_comment_post_ids:
         current_page = 1
         while True:
-            response = crawler.get_comment_mobile(thread_id, post_id, current_page)
-            comment_data = json.loads(response.content)
             if not comment_data['subpost_list']:
                 break  # 正常情况下，每页楼中楼有30条评论，但经常会出现小于30的情况，因此不推测楼中楼的实际页码，一直循环到没有评论为止
+            while True:
+                response = crawler.get_comment_mobile(thread_id, post_id, current_page)
+                comment_data = json.loads(response.content)
+                if comment_data['error_code'] == '0':
+                    break
+                else:
+                    print("Bad response, sleep for 30s.")
+                    time.sleep(30)
             for comment in comment_data['subpost_list']:
                 db.execute('insert or ignore into user values (?,?,?,?)', (
                     comment['author']['id'],
