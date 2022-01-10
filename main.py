@@ -31,7 +31,7 @@ db.execute('''
     create table thread(
     id numeric primary key not null,
     title text not null,
-    user_id text not null,
+    user_id numeric not null,
     reply_num numeric not null,
     is_good numeric not null,
     foreign key(user_id) references user(id))''')
@@ -39,7 +39,7 @@ db.execute('''
     create table post(
     id numeric primary key not null,
     floor numeric not null,
-    user_id text not null,
+    user_id numeric not null,
     content text,
     time text not null,
     comment_num numeric not null,
@@ -50,7 +50,7 @@ db.execute('''
 db.execute('''
     create table comment(
     id numeric primary key not null,
-    user_id text not null,
+    user_id numeric not null,
     content text,
     time text not null,
     post_id numeric not null,
