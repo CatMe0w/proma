@@ -168,8 +168,6 @@ for thread_id in thread_ids:
     for post_id in has_comment_post_ids:
         current_page = 1
         while True:
-            if not comment_data['subpost_list']:
-                break  # 正常情况下，每页楼中楼有30条评论，但经常会出现小于30的情况，因此不推测楼中楼的实际页码，一直循环到没有评论为止
             while True:
                 response = crawler.get_comment_mobile(thread_id, post_id, current_page)
                 comment_data = json.loads(response.content)
@@ -199,7 +197,10 @@ for thread_id in thread_ids:
                     comment_data['post']['id']
                 ))
             conn.commit()
-            current_page += 1
+            if current_page == int(comment_data['page']['total_page']):
+                break
+            else:
+                current_page += 1
 
     next_page_post_id = post_data['post_list'][-1]['id']
     pseudo_page += 1
