@@ -59,59 +59,23 @@ db.execute('''
 conn.commit()
 
 # 获取帖子目录
-# 帖子目录（吧主页）仅采集web端
-Path("./proma-raw/thread_lists").mkdir(parents=True, exist_ok=True)
-
 for page in range(1, MAX_PAGE + 1):
-    pn_param = (page - 1) * 50
-    params = (
-        ('kw', TIEBA_NAME),
-        ('ie', 'utf-8'),
-        ('pn', str(pn_param)),
-    )
-
-    print("Current page: threads, {} of {}".format(page, MAX_PAGE))
-    response = crawler.nice_get('https://tieba.baidu.com/f', headers=crawler.STANDARD_HEADERS, params=params)
-
-    content = response.content
-    with open('./proma-raw/thread_lists/{}.html'.format(page), 'wb') as f:
-        f.write(content)
-
-    soup = BeautifulSoup(content, 'html.parser')  # lxml在不同操作系统上的行为可能不一致
-    comments = soup.find_all(text=lambda text: isinstance(text, Comment))
-    if page == 1:
-        soup = BeautifulSoup(comments[-3], 'html.parser')
-    else:
-        soup = BeautifulSoup(comments[-12], 'html.parser')
-
-    thread_entry_html = soup.find_all('li', class_='j_thread_list')
-    thread_entries = []
-    for thread_entry in thread_entry_html:
-        data_field = json.loads(thread_entry['data-field'])
-        thread_entries.append(data_field)
-
-    title_html = soup.find_all('a', class_='j_th_tit')
-    for title, i in zip(title_html, range(len(title_html))):
-        thread_entries[i].update({'title': title})
-
-    user_id_html = soup.find_all('span', class_='tb_icon_author')
-    for user_id, i in zip(user_id_html, range(len(user_id_html))):
-        user_id_dict = json.loads(user_id['data-field'])
-        thread_entries[i].update(user_id_dict)
-
-    for thread_entry in thread_entries:
+    response = crawler.get_thread_list_mobile(TIEBA_NAME, page, MAX_PAGE)
+    thread_list_data = json.loads(response.content)
+    for user in thread_list_data['user_list']:
         db.execute('insert or ignore into user values (?,?,?,?)', (
-            thread_entry['user_id'],
-            thread_entry['author_name'],
-            thread_entry['author_nickname'],
-            thread_entry['author_portrait']
+            user['id'],
+            user.get('name'),  # IP匿名用户没有name
+            user['name_show'],
+            user['portrait']  # XXX
         ))
-        db.execute('insert into thread values (?,?,?,?,?)', (
-            thread_entry['id'],
-            thread_entry['title'],
-            thread_entry['user_id'],
-            thread_entry['reply_num'],
-            thread_entry['is_good']
+    for thread in thread_list_data['thread_list']:
+        db.execute('insert into post values (?,?,?,?,?)', (
+            thread['id'],
+            thread['title'],
+            thread['author_id'],
+            thread['reply_num'],
+            thread['is_good']
         ))
     conn.commit()
 
