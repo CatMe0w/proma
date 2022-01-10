@@ -100,6 +100,11 @@ for page in range(1, MAX_PAGE + 1):
         thread_entries[i].update(user_id_dict)
 
     for thread_entry in thread_entries:
+        if thread_entry['is_good'] is True:
+            is_good = 1
+        else:
+            is_good = 0
+
         db.execute('insert or ignore into user values (?,?,?,?)', (
             thread_entry['user_id'],
             thread_entry['author_name'],
@@ -111,7 +116,7 @@ for page in range(1, MAX_PAGE + 1):
             thread_entry['title'],
             thread_entry['user_id'],
             thread_entry['reply_num'],
-            thread_entry['is_good']
+            is_good
         ))
     conn.commit()
 
