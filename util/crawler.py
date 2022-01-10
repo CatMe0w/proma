@@ -62,6 +62,23 @@ def add_sign(data):
     return data
 
 
+def get_thread_list_mobile(tieba_name, page, max_page):
+    Path("./proma-raw/thread_lists").mkdir(parents=True, exist_ok=True)
+    print("Current page: threads, {} of {}, using mobile api".format(page, max_page))
+
+    data = {
+        'kw': str(tieba_name),
+        'pn': str(page),
+        'rn': '50',
+        '_client_version': '9.9.8.32'
+    }
+    data_signed = add_sign(data)
+    response = nice_post('https://tieba.baidu.com/c/f/frs/page', data=data_signed)
+    with open('./proma-raw/thread_lists/{}.json'.format(page), 'wb') as f:
+        f.write(response.content)
+    return response
+
+
 def get_post_mobile(thread_id, pseudo_page, post_id=None):
     # 获取帖子内容的移动端接口没有翻页参数，只能通过指定最后一层楼的post_id，来获取这一层楼往后的30层楼，以此达到翻页效果
     Path('./proma-raw/posts/mobile').mkdir(parents=True, exist_ok=True)
