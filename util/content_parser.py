@@ -29,7 +29,6 @@ def parse_video(item):
 def parse(data):
     parsed_data = []
     for item in data:
-        print(item)
         if item['type'] == ('0' or '9'):
             parsed_data.append({'type': 'text', 'content': item['text']})
         if item['type'] == '1':
