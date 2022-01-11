@@ -127,86 +127,92 @@ for page in range(1, MAX_PAGE + 1):
 # 获取帖子内容
 thread_ids = [_[0] for _ in db.execute('select id from thread')]
 
-next_page_post_id = None
-pseudo_page = 1
 for thread_id in thread_ids:
+    # 获取一个帖子里的所有楼层
+    pseudo_page = 1
+    next_page_post_id = None
     while True:
-        response = crawler.get_post_mobile(thread_id, pseudo_page, next_page_post_id)
-        post_data = json.loads(response.content)
-        if post_data['error_code'] == '0':
-            break
-        else:
-            print("Bad response, sleep for 30s.")
-            time.sleep(30)
-
-    for user in post_data['user_list']:
-        db.execute('insert or ignore into user values (?,?,?,?)', (
-            user['id'],
-            user.get('name'),  # IP匿名用户没有name
-            user['name_show'],
-            user['portrait']  # XXX
-        ))
-    for post in post_data['post_list']:
-        post_time = datetime.fromtimestamp(
-            int(post['time']),
-            pytz.timezone('Asia/Shanghai')
-        ).strftime("%Y-%m-%d %H:%M:%S")
-        db.execute('insert into post values (?,?,?,?,?,?,?,?)', (
-            post['id'],
-            post['floor'],
-            post['author_id'],
-            content_parser.parse(post['content']),
-            post_time,
-            post['sub_post_number'],
-            None,
-            thread_id
-        ))
-    conn.commit()
-
-    # 获取楼中楼
-    has_comment_post_ids = []
-    for post in post_data['post_list']:
-        if post['sub_post_number'] != '0':
-            has_comment_post_ids.append(post['id'])
-    for post_id in has_comment_post_ids:
-        current_page = 1
         while True:
-            while True:
-                response = crawler.get_comment_mobile(thread_id, post_id, current_page)
-                comment_data = json.loads(response.content)
-                if comment_data['error_code'] == '0':
-                    break
-                else:
-                    print("Bad response, sleep for 30s.")
-                    time.sleep(30)
-            for comment in comment_data['subpost_list']:
-                db.execute('insert or ignore into user values (?,?,?,?)', (
-                    comment['author']['id'],
-                    comment['author']['name'],
-                    comment['author']['name_show'],
-                    comment['author']['portrait']  # XXX
-                ))
-
-                comment_time = datetime.fromtimestamp(
-                    int(comment['time']),
-                    pytz.timezone('Asia/Shanghai')
-                ).strftime("%Y-%m-%d %H:%M:%S")
-                db.execute('insert or ignore into comment values (?,?,?,?,?)', (
-                    # Why "or ignore": next_page_post_id这一楼层自身会重复出现一次
-                    comment['id'],
-                    comment['author']['id'],
-                    content_parser.parse(comment['content']),
-                    comment_time,
-                    comment_data['post']['id']
-                ))
-            conn.commit()
-            if current_page == int(comment_data['page']['total_page']):
+            response = crawler.get_post_mobile(thread_id, pseudo_page, next_page_post_id)
+            post_data = json.loads(response.content)
+            if post_data['error_code'] == '0':
                 break
             else:
-                current_page += 1
+                print("Bad response, sleep for 30s.")
+                time.sleep(30)
 
-    next_page_post_id = post_data['post_list'][-1]['id']
-    pseudo_page += 1
+        for user in post_data['user_list']:
+            db.execute('insert or ignore into user values (?,?,?,?)', (
+                user['id'],
+                user.get('name'),  # IP匿名用户没有name
+                user['name_show'],
+                user['portrait']  # XXX
+            ))
+        for post in post_data['post_list']:
+            post_time = datetime.fromtimestamp(
+                int(post['time']),
+                pytz.timezone('Asia/Shanghai')
+            ).strftime("%Y-%m-%d %H:%M:%S")
+            db.execute('insert or ignore into post values (?,?,?,?,?,?,?,?)', (
+                # Why "or ignore": next_page_post_id这一楼层自身会重复出现一次
+                post['id'],
+                post['floor'],
+                post['author_id'],
+                content_parser.parse(post['content']),
+                post_time,
+                post['sub_post_number'],
+                None,
+                thread_id
+            ))
+        conn.commit()
+
+        # 获取楼中楼
+        has_comment_post_ids = []
+        for post in post_data['post_list']:
+            if post['sub_post_number'] != '0':
+                has_comment_post_ids.append(post['id'])
+        for post_id in has_comment_post_ids:
+            current_page = 1
+            while True:
+                while True:
+                    response = crawler.get_comment_mobile(thread_id, post_id, current_page)
+                    comment_data = json.loads(response.content)
+                    if comment_data['error_code'] == '0':
+                        break
+                    else:
+                        print("Bad response, sleep for 30s.")
+                        time.sleep(30)
+                for comment in comment_data['subpost_list']:
+                    db.execute('insert or ignore into user values (?,?,?,?)', (
+                        comment['author']['id'],
+                        comment['author']['name'],
+                        comment['author']['name_show'],
+                        comment['author']['portrait']  # XXX
+                    ))
+
+                    comment_time = datetime.fromtimestamp(
+                        int(comment['time']),
+                        pytz.timezone('Asia/Shanghai')
+                    ).strftime("%Y-%m-%d %H:%M:%S")
+                    db.execute('insert or ignore into comment values (?,?,?,?,?)', (
+                        # Why "or ignore": 若某next_page_post_id存在楼中楼，则这些楼中楼也会重复
+                        comment['id'],
+                        comment['author']['id'],
+                        content_parser.parse(comment['content']),
+                        comment_time,
+                        comment_data['post']['id']
+                    ))
+                conn.commit()
+                if current_page == int(comment_data['page']['total_page']):
+                    break
+                else:
+                    current_page += 1
+
+        if post_data['page']['has_more'] == '1':
+            next_page_post_id = post_data['post_list'][-1]['id']
+            pseudo_page += 1
+        else:
+            break
 
 # 补完post表
 # 正文一列采用web端作为数据源，其余采用移动端
