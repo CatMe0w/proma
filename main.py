@@ -136,7 +136,7 @@ for thread_id in thread_ids:
             try:
                 response = crawler.get_post_mobile(thread_id, pseudo_page, next_page_post_id)
                 post_data = json.loads(response.content)
-                if post_data['error_code'] == '0':
+                if post_data['error_code'] != '0':
                     raise ValueError
             except (ValueError, UnicodeDecodeError):
                 print('Bad response, wait for 30s.')
@@ -181,7 +181,7 @@ for thread_id in thread_ids:
                     try:
                         response = crawler.get_comment_mobile(thread_id, post_id, current_page)
                         comment_data = json.loads(response.content)
-                        if comment_data['error_code'] == '0':
+                        if comment_data['error_code'] != '0':
                             raise ValueError
                     except (ValueError, UnicodeDecodeError):
                         print('Bad response, wait for 30s.')
