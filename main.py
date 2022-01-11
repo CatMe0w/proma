@@ -133,13 +133,16 @@ for thread_id in thread_ids:
     next_page_post_id = None
     while True:
         while True:
-            response = crawler.get_post_mobile(thread_id, pseudo_page, next_page_post_id)
-            post_data = json.loads(response.content)
-            if post_data['error_code'] == '0':
-                break
-            else:
-                print("Bad response, sleep for 30s.")
+            try:
+                response = crawler.get_post_mobile(thread_id, pseudo_page, next_page_post_id)
+                post_data = json.loads(response.content)
+                if post_data['error_code'] == '0':
+                    raise ValueError
+            except (ValueError, UnicodeDecodeError):
+                print('Bad response, wait for 30s.')
                 time.sleep(30)
+            else:
+                break
 
         for user in post_data['user_list']:
             db.execute('insert or ignore into user values (?,?,?,?)', (
@@ -175,13 +178,17 @@ for thread_id in thread_ids:
             current_page = 1
             while True:
                 while True:
-                    response = crawler.get_comment_mobile(thread_id, post_id, current_page)
-                    comment_data = json.loads(response.content)
-                    if comment_data['error_code'] == '0':
-                        break
-                    else:
-                        print("Bad response, sleep for 30s.")
+                    try:
+                        response = crawler.get_comment_mobile(thread_id, post_id, current_page)
+                        comment_data = json.loads(response.content)
+                        if comment_data['error_code'] == '0':
+                            raise ValueError
+                    except (ValueError, UnicodeDecodeError):
+                        print('Bad response, wait for 30s.')
                         time.sleep(30)
+                    else:
+                        break
+
                 for comment in comment_data['subpost_list']:
                     db.execute('insert or ignore into user values (?,?,?,?)', (
                         comment['author']['id'],
