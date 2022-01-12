@@ -45,9 +45,13 @@ def nice_post(url, data=None):
         try:
             response = requests.post(url, data=data)
             if response.status_code != 200:
-                raise NotImplementedError
+                raise ValueError
         except requests.exceptions.Timeout:
             print("Remote is not responding, sleep for 30s.")
+            time.sleep(30)
+            continue
+        except ValueError:
+            print('Rate limit exceeded, sleep for 30s.')
             time.sleep(30)
             continue
         else:
