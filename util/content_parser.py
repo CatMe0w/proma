@@ -17,6 +17,8 @@ def parse_emotion(item):
 def parse_image(item):
     if item['type'] == '3':  # 一般图片
         try:
+            if item['origin_src'].startswith('\/\/tb2.bdstatic.com'):  # 无法解释
+                return 'http:' + item['origin_src']
             return item['origin_src']
         except KeyError:
             # 一些固定资源（如预设的“神来一句”）没有origin_src
