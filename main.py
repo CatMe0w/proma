@@ -93,7 +93,7 @@ for page in range(1, MAX_PAGE + 1):
 
     title_html = soup.find_all('a', class_='j_th_tit')
     for title, i in zip(title_html, range(len(title_html))):
-        thread_entries[i].update({'title': title.contents[0]})
+        thread_entries[i].update({'title': title.contents[0].text})
 
     user_id_html = soup.find_all('span', class_='tb_icon_author')
     for user_id, i in zip(user_id_html, range(len(user_id_html))):
