@@ -16,7 +16,11 @@ def parse_emotion(item):
 
 def parse_image(item):
     if item['type'] == '3':
-        return item['origin_src']
+        try:
+            return item['origin_src']
+        except KeyError:
+            # 一些固定资源（如预设的“神来一句”）没有origin_src
+            return item['cdn_src_active'].split('&')[0].split('=')[-1]  # 切掉末尾的参数，再切掉c.tieba.baidu.com域名，否则返回的内容没有意义
     if item['type'] == '11':
         return item['static']
     if item['type'] == '20':
