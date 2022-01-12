@@ -15,15 +15,15 @@ def parse_emotion(item):
 
 
 def parse_image(item):
-    if item['type'] == '3':
+    if item['type'] == '3':  # 一般图片
         try:
             return item['origin_src']
         except KeyError:
             # 一些固定资源（如预设的“神来一句”）没有origin_src
             return item['cdn_src_active'].split('&')[0].split('=')[-1]  # 切掉末尾的参数，再切掉c.tieba.baidu.com域名，否则返回的内容没有意义
-    if item['type'] == '11':
+    if item['type'] == '11':  # 奇怪的大表情
         return item['static']
-    if item['type'] == '20':
+    if item['type'] == '20':  # 奇怪的可编辑大表情，类似“神来一句”
         return item['src']
 
 
@@ -38,7 +38,7 @@ def parse_video(item):
 def parse(data):
     parsed_data = []
     for item in data:
-        if item['type'] == '0' or item['type'] == '9':
+        if item['type'] == '0' or item['type'] == '9':  # 0是一般文本，9是“电话号码”（连续数字），一律按纯文本处理即可
             parsed_data.append({'type': 'text', 'content': item['text']})
         if item['type'] == '1':
             parsed_data.append({'type': 'url', 'content': parse_url(item)})
