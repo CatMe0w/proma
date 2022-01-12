@@ -23,6 +23,8 @@ def parse_image(item):
             return item['cdn_src_active'].split('&')[0].split('=')[-1]  # 切掉末尾的参数，再切掉c.tieba.baidu.com域名，否则返回的内容没有意义
     if item['type'] == '11':  # 奇怪的大表情
         return item['static']
+    if item['type'] == '16':  # 奇怪的涂鸦
+        return item['graffiti_info']['url']
     if item['type'] == '20':  # 奇怪的可编辑大表情，类似“神来一句”
         return item['src']
 
