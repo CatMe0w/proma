@@ -38,13 +38,13 @@ def parse_video(item):
 def parse(data):
     parsed_data = []
     for item in data:
-        if item['type'] == ('0' or '9'):
+        if item['type'] == '0' or item['type'] == '9':
             parsed_data.append({'type': 'text', 'content': item['text']})
         if item['type'] == '1':
             parsed_data.append({'type': 'url', 'content': parse_url(item)})
         if item['type'] == '2':
             parsed_data.append({'type': 'emotion', 'content': parse_emotion(item)})
-        if item['type'] == ('3' or '11' or '20'):
+        if item['type'] == '3' or item['type'] == '11' or item['type'] == '20':
             parsed_data.append({'type': 'image', 'content': parse_image(item)})
         if item['type'] == '4':
             parsed_data.append({'type': 'username', 'content': parse_username(item)})
