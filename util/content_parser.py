@@ -32,7 +32,7 @@ def parse_username(item):
 
 
 def parse_video(item):
-    return {'url': purify_url(item['text'])}
+    return purify_url(item['text'])
 
 
 def parse(data):
