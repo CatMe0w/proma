@@ -27,9 +27,13 @@ def nice_get(url, headers=None, params=None):
         try:
             response = requests.get(url, headers=headers, params=params)
             if response.status_code != 200:
-                raise NotImplementedError
+                raise ValueError
         except requests.exceptions.Timeout:
             print("Remote is not responding, sleep for 30s.")
+            time.sleep(30)
+            continue
+        except ValueError:
+            print('Rate limit exceeded, sleep for 30s.')
             time.sleep(30)
             continue
         else:
