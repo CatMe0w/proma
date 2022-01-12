@@ -3,7 +3,7 @@ from urllib.parse import unquote
 
 
 def purify_url(url):
-    return unquote(url.split('checkurl?url=')[-1])
+    return unquote(url.split('checkurl?url=')[-1].split('&meta=1&urlrefer=')[0])
 
 
 def parse_url(item):
