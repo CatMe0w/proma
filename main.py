@@ -145,6 +145,8 @@ for thread_id in thread_ids:
                 break
 
         for user in post_data['user_list']:
+            if user.get('name') == '':
+                user['name'] = None
             db.execute('insert or ignore into user values (?,?,?,?)', (
                 user['id'],
                 user.get('name'),  # IP匿名用户没有name
@@ -190,6 +192,8 @@ for thread_id in thread_ids:
                         break
 
                 for comment in comment_data['subpost_list']:
+                    if comment['author']['name'] == '':
+                        comment['author']['name'] = None
                     db.execute('insert or ignore into user values (?,?,?,?)', (
                         comment['author']['id'],
                         comment['author']['name'],
