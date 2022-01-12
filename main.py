@@ -139,8 +139,8 @@ for thread_id in thread_ids:
                 if post_data['error_code'] != '0':
                     raise ValueError
             except (ValueError, UnicodeDecodeError):
-                print('Bad response, wait for 30s.')
-                time.sleep(30)
+                print('Bad response, wait for 5s.')
+                time.sleep(5)
             else:
                 break
 
@@ -186,8 +186,8 @@ for thread_id in thread_ids:
                         if comment_data['error_code'] != '0':
                             raise ValueError
                     except (ValueError, UnicodeDecodeError):
-                        print('Bad response, wait for 30s.')
-                        time.sleep(30)
+                        print('Bad response, wait for 5s.')
+                        time.sleep(5)
                     else:
                         break
 
