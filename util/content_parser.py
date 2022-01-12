@@ -1,8 +1,13 @@
 import json
+from urllib.parse import unquote
+
+
+def purify_url(url):
+    return unquote(url.split('checkurl?url=')[-1])
 
 
 def parse_url(item):
-    return {'url': item['link'], 'text': item['text']}
+    return {'url': purify_url(item['link']), 'text': item['text']}
 
 
 def parse_emotion(item):
@@ -23,7 +28,7 @@ def parse_username(item):
 
 
 def parse_video(item):
-    return {'url': item['link'], 'cover_picture_url': item['src']}
+    return {'url': purify_url(item['text'])}
 
 
 def parse(data):
