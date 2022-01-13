@@ -10,7 +10,7 @@ def parse_url(item):
     return {'url': purify_url(item['link']), 'text': item['text']}
 
 
-def parse_emotion(item):
+def parse_emoticon(item):
     return {'id': item['text'], 'description': item['c']}
 
 
@@ -47,7 +47,7 @@ def parse(data):
         if item['type'] == '1':
             parsed_data.append({'type': 'url', 'content': parse_url(item)})
         if item['type'] == '2':
-            parsed_data.append({'type': 'emotion', 'content': parse_emotion(item)})
+            parsed_data.append({'type': 'emoticon', 'content': parse_emoticon(item)})
         if item['type'] == '3' or item['type'] == '11' or item['type'] == '20':
             parsed_data.append({'type': 'image', 'content': parse_image(item)})
         if item['type'] == '4':
