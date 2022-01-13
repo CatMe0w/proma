@@ -29,7 +29,7 @@ def nice_get(url, headers=None, params=None):
             if response.status_code != 200:
                 raise ValueError
         except requests.exceptions.Timeout:
-            print("Remote is not responding, sleep for 30s.")
+            print('Remote is not responding, sleep for 30s.')
             time.sleep(30)
             continue
         except ValueError:
@@ -47,7 +47,7 @@ def nice_post(url, data=None):
             if response.status_code != 200:
                 raise ValueError
         except requests.exceptions.Timeout:
-            print("Remote is not responding, sleep for 30s.")
+            print('Remote is not responding, sleep for 30s.')
             time.sleep(30)
             continue
         except ValueError:
@@ -60,19 +60,19 @@ def nice_post(url, data=None):
 
 # 以下函数用于从移动端接口获取数据
 def add_sign(data):
-    _ = ""
+    _ = ''
     for (k, v) in sorted(data.items()):
-        _ += (k + "=" + v)
+        _ += (k + '=' + v)
     _ += 'tiebaclient!!!'
 
     sign = hashlib.md5(_.encode('utf-8')).hexdigest().upper()
-    data.update({"sign": str(sign)})
+    data.update({'sign': str(sign)})
     return data
 
 
 def get_thread_list_mobile(tieba_name, page, max_page):
     # 从移动端接口获取帖子目录，但由于存在移动端不可见的帖子，该函数目前不再使用
-    print("Current page: threads, {} of {}, using mobile api".format(page, max_page))
+    print('Current page: threads, {} of {}, using mobile api'.format(page, max_page))
 
     data = {
         'kw': str(tieba_name),
@@ -83,7 +83,7 @@ def get_thread_list_mobile(tieba_name, page, max_page):
     data_signed = add_sign(data)
     response = nice_post('https://tieba.baidu.com/c/f/frs/page', data=data_signed)
 
-    Path("./proma-raw/thread_lists").mkdir(parents=True, exist_ok=True)
+    Path('./proma-raw/thread_lists').mkdir(parents=True, exist_ok=True)
     with open('./proma-raw/thread_lists/{}.json'.format(page), 'wb') as f:
         f.write(response.content)
     return response
@@ -140,7 +140,7 @@ def get_post_web(thread_id, page):
     )
     response = nice_get('https://tieba.baidu.com/p/' + str(thread_id), headers=STANDARD_HEADERS, params=params)
 
-    Path("./proma-raw/posts/web/{}".format(thread_id)).mkdir(parents=True, exist_ok=True)
+    Path('./proma-raw/posts/web/{}'.format(thread_id)).mkdir(parents=True, exist_ok=True)
     with open('./proma-raw/posts/web/{}/{}.json'.format(thread_id, page), 'wb') as f:
         f.write(response.content)
     return response
@@ -157,7 +157,7 @@ def get_totalcomment_web(thread_id, page):
     )
     response = nice_get('https://tieba.baidu.com/p/totalComment', headers=STANDARD_HEADERS, params=params)
 
-    Path("./proma-raw/totalcomments/{}".format(thread_id)).mkdir(parents=True, exist_ok=True)
+    Path('./proma-raw/totalcomments/{}'.format(thread_id)).mkdir(parents=True, exist_ok=True)
     with open('./proma-raw/totalcomments/{}/{}.json'.format(thread_id, page), 'wb') as f:
         f.write(response.content)
     return response
@@ -174,7 +174,7 @@ def get_comment_web(thread_id, post_id, page):
     )
     response = nice_get('https://tieba.baidu.com/p/comment', headers=STANDARD_HEADERS, params=params)
 
-    Path("./proma-raw/comments/web/{}/{}".format(thread_id, post_id)).mkdir(parents=True, exist_ok=True)
+    Path('./proma-raw/comments/web/{}/{}'.format(thread_id, post_id)).mkdir(parents=True, exist_ok=True)
     with open('./proma-raw/comments/web/{}/{}/{}.html'.format(thread_id, post_id, page), 'wb') as f:
         f.write(response.content)
     return response
