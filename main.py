@@ -226,4 +226,17 @@ for thread_id in thread_ids:
             break
 
 # 补完post表
-# 正文一列采用web端作为数据源，其余采用移动端
+# 通过web版补充移动端缺失的正文换行符、签名档、小尾巴（即“来自掌上百度”或“来自Android客户端”等）
+for thread_id in thread_ids:
+    page = 1
+    while True:
+        response = crawler.get_post_web(thread_id, page)
+        soup = BeautifulSoup(response.content, 'html.parser')
+        max_page = soup.find_all('li', class_='l_reply_num')[0].get_text().strip('页').split('回复贴，共')[-1]
+        # TODO
+
+        if page < max_page:
+            page += 1
+        else:
+            break
+
