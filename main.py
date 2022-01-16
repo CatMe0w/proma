@@ -232,7 +232,7 @@ for thread_id in thread_ids:
     while True:
         response = crawler.get_post_web(thread_id, page)
         soup = BeautifulSoup(response.content, 'html.parser')
-        max_page = soup.find_all('li', class_='l_reply_num')[0].get_text().strip('页').split('回复贴，共')[-1]
+        max_page = int(soup.find_all('li', class_='l_reply_num')[0].get_text().strip('页').split('回复贴，共')[-1])
         # TODO
 
         if page < max_page:
