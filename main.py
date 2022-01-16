@@ -109,12 +109,6 @@ for page in range(1, MAX_PAGE + 1):
         else:
             is_good = 0
 
-        db.execute('insert or ignore into user values (?,?,?,?)', (
-            thread_entry['user_id'],
-            thread_entry['author_name'],
-            thread_entry['author_nickname'],
-            thread_entry['author_portrait']
-        ))
         db.execute('insert into thread values (?,?,?,?,?)', (
             thread_entry['id'],
             thread_entry['title'],
