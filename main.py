@@ -229,7 +229,23 @@ for thread_id in thread_ids:
         response = crawler.get_post_web(thread_id, page)
         soup = BeautifulSoup(response.content, 'html.parser')
         max_page = int(soup.find_all('li', class_='l_reply_num')[0].get_text().strip('页').split('回复贴，共')[-1])
-        # TODO
+
+        posts = soup.find_all('div', class_='l_post')
+        for post in posts:
+            # 补充签名档和小尾巴
+            post_id = post['data-pid']
+            signature = post.find('img', class_='j_user_sign')['src']
+            if signature.endswith('楼'):
+                signature = None
+            tail = post.find('span', class_='tail-info').get_text()
+            db.execute('update post set signature = ?, tail = ? where id = ?', (
+                signature,
+                tail,
+                post_id
+            ))
+            # TODO: 换行符修复
+
+        conn.commit()
 
         if page < max_page:
             page += 1
