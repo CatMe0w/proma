@@ -235,9 +235,9 @@ for thread_id in thread_ids:
             # 补充签名档和小尾巴
             post_id = post['data-pid']
             signature = post.find('img', class_='j_user_sign')['src']
-            if signature.endswith('楼'):
-                signature = None
             tail = post.find('span', class_='tail-info').get_text()
+            if tail.endswith('楼'):
+                tail = None
             db.execute('update post set signature = ?, tail = ? where id = ?', (
                 signature,
                 tail,
