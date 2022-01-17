@@ -45,6 +45,7 @@ db.execute('''
     time text not null,
     comment_num numeric not null,
     signature text,
+    tail text,
     thread_id numeric not null,
     foreign key(user_id) references user(id),
     foreign key(thread_id) references thread(id))''')
@@ -152,7 +153,7 @@ for thread_id in thread_ids:
                 int(post['time']),
                 pytz.timezone('Asia/Shanghai')
             ).strftime("%Y-%m-%d %H:%M:%S")
-            db.execute('insert or ignore into post values (?,?,?,?,?,?,?,?)', (
+            db.execute('insert or ignore into post values (?,?,?,?,?,?,?,?,?)', (
                 # Why "or ignore": next_page_post_id这一楼层自身会重复出现一次
                 post['id'],
                 post['floor'],
@@ -160,6 +161,7 @@ for thread_id in thread_ids:
                 content_parser.parse(post['content']),
                 post_time,
                 post['sub_post_number'],
+                None,
                 None,
                 thread_id
             ))
