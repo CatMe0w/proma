@@ -234,7 +234,9 @@ for thread_id in thread_ids:
         for post in posts:
             # 补充签名档和小尾巴
             post_id = post['data-pid']
-            signature = post.find('img', class_='j_user_sign')['src']
+            signature = post.find('img', class_='j_user_sign')
+            if signature is not None:
+                signature = signature['src']
             tail = post.find('span', class_='tail-info').get_text()
             if tail.endswith('楼'):
                 tail = None
