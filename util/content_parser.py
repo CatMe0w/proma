@@ -3,6 +3,8 @@ from urllib.parse import unquote
 
 
 def purify_url(url):
+    if url.startswith('http://tieba.baidu.com/p/'):
+        return url.split('?share=9105&fr=share')[0]
     return unquote(url.split('checkurl?url=')[-1].split('&meta=1&urlrefer=')[0])
 
 
