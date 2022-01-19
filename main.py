@@ -4,6 +4,7 @@ import sqlite3
 import time
 import util.crawler as crawler
 import util.content_parser as content_parser
+import util.album_fix as album_fix
 from pathlib import Path
 from datetime import datetime
 from bs4 import BeautifulSoup, Comment
@@ -220,6 +221,49 @@ for thread_id in thread_ids:
             pseudo_page += 1
         else:
             break
+
+# 修复图片帖子
+# 移动端接口获取的图片帖子内容为空
+params = (
+    ('kw', TIEBA_NAME),
+    ('ie', 'utf-8'),
+    ('tab', 'album'),
+)
+
+print("Preparing to fix albums")
+Path("./proma-raw/albums").mkdir(parents=True, exist_ok=True)
+response = crawler.nice_get('https://tieba.baidu.com/f', headers=crawler.STANDARD_HEADERS, params=params)
+
+with open('./proma-raw/albums/catalog.html', 'wb') as f:
+    f.write(response.content)
+
+soup = BeautifulSoup(response.content, 'html.parser')
+comments = soup.find_all(text=lambda text: isinstance(text, Comment))
+soup = BeautifulSoup(comments[-4], 'html.parser')
+
+albums = soup.find_all('a', class_='grbm_ele_a')
+for album in albums:
+    post_id = album['href'].strip('/p/')
+
+    params = (
+        ('kw', TIEBA_NAME),
+        ('alt', 'jview'),
+        ('rn', '200'),
+        ('tid', str(post_id)),
+        ('pn', '1'),
+        ('ps', '1'),
+        ('pe', '1000'),
+        ('info', '1'),
+    )
+    response = crawler.nice_get('https://tieba.baidu.com/photo/g/bw/picture/list', headers=crawler.STANDARD_HEADERS, params=params)
+    with open('./proma-raw/albums/{}.html'.format(post_id), 'wb') as f:
+        f.write(response.content)
+
+    db.execute('update post set content = ? where id = ?', (
+        album_fix.fix(response.content),
+        post_id
+    ))
+    conn.commit()
 
 # 补完post表
 # 通过web版补充移动端缺失的正文换行符、签名档、小尾巴（即“来自掌上百度”或“来自Android客户端”等）
