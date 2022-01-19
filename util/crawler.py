@@ -83,8 +83,8 @@ def get_thread_list_mobile(tieba_name, page, max_page):
     data_signed = add_sign(data)
     response = nice_post('https://tieba.baidu.com/c/f/frs/page', data=data_signed)
 
-    Path('./proma-raw/thread_lists').mkdir(parents=True, exist_ok=True)
-    with open('./proma-raw/thread_lists/{}.json'.format(page), 'wb') as f:
+    Path('./proma-raw/threads').mkdir(parents=True, exist_ok=True)
+    with open('./proma-raw/threads/{}.json'.format(page), 'wb') as f:
         f.write(response.content)
     return response
 
