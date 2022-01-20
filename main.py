@@ -243,25 +243,25 @@ soup = BeautifulSoup(comments[-4], 'html.parser')
 
 albums = soup.find_all('a', class_='grbm_ele_a')
 for album in albums:
-    post_id = album['href'].strip('/p/')
+    thread_id = album['href'].strip('/p/')
 
     params = (
         ('kw', TIEBA_NAME),
         ('alt', 'jview'),
         ('rn', '200'),
-        ('tid', str(post_id)),
+        ('tid', str(thread_id)),
         ('pn', '1'),
         ('ps', '1'),
         ('pe', '1000'),
         ('info', '1'),
     )
     response = crawler.nice_get('https://tieba.baidu.com/photo/g/bw/picture/list', headers=crawler.STANDARD_HEADERS, params=params)
-    with open('./proma-raw/albums/{}.html'.format(post_id), 'wb') as f:
+    with open('./proma-raw/albums/{}.html'.format(thread_id), 'wb') as f:
         f.write(response.content)
 
-    db.execute('update post set content = ? where id = ?', (
+    db.execute('update post set content = ? where thread_id = ?', (
         album_fix.fix(response.content),
-        post_id
+        thread_id
     ))
     conn.commit()
 
