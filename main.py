@@ -255,6 +255,7 @@ for album in albums:
         ('pe', '1000'),
         ('info', '1'),
     )
+    print('Current page: albums, thread_id {}'.format(thread_id))
     response = crawler.nice_get('https://tieba.baidu.com/photo/g/bw/picture/list', headers=crawler.STANDARD_HEADERS, params=params)
     with open('./proma-raw/albums/{}.html'.format(thread_id), 'wb') as f:
         f.write(response.content)
