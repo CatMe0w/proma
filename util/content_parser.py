@@ -3,8 +3,8 @@ from urllib.parse import unquote
 
 
 def purify_url(url):
-    if url.startswith('http://tieba.baidu.com/p/'):
-        return url.split('?share=9105&fr=share')[0]
+    if url.startswith('http://tieba.baidu.com/'):
+        return url.split('?share=9105&fr=share')[0].replace('http://', 'https://')
     return unquote(url.split('checkurl?url=')[-1].split('&meta=1&urlrefer=')[0])
 
 
@@ -20,17 +20,17 @@ def parse_image(item):
     if item['type'] == '3':  # 一般图片
         try:
             if item['origin_src'].startswith('\/\/tb2.bdstatic.com'):  # 无法解释
-                return 'http:' + item['origin_src']
-            return item['origin_src']
+                return 'https:' + item['origin_src']
+            return item['origin_src'].replace('http://', 'https://')
         except KeyError:
             # 一些固定资源（如预设的“神来一句”）没有origin_src
-            return item['cdn_src_active'].split('&')[0].split('=')[-1]  # 切掉末尾的参数，再切掉c.tieba.baidu.com域名，否则返回的内容没有意义
+            return item['cdn_src_active'].split('&')[0].split('=')[-1].replace('http://', 'https://')  # 切掉末尾的参数，再切掉c.tieba.baidu.com域名，否则返回的内容没有意义
     if item['type'] == '11':  # 奇怪的大表情
-        return item['static']
+        return item['static'].replace('http://', 'https://')
     if item['type'] == '16':  # 奇怪的涂鸦
-        return item['graffiti_info']['url']
+        return item['graffiti_info']['url'].replace('http://', 'https://')
     if item['type'] == '20':  # 奇怪的可编辑大表情，类似“神来一句”
-        return item['src']
+        return item['src'].replace('http://', 'https://')
 
 
 def parse_username(item):
