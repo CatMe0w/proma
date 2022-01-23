@@ -1,20 +1,26 @@
 def fix(html, content):
     content_queued = []
     for item in content:
+        if item['type'] == 'text' and item['content'] == '\n':
+            continue
         if item['type'] == 'text' and '\n' in item['content']:
             content_queued.append(item['content'])
 
     split_html = [_ for _ in html.descendants]
     br_count = 0
-    br_index = []
-    for (text, insertion_count) in zip(split_html, range(len(split_html))):
-        if text.name == 'br' and insertion_count == len(split_html) - 1:
+    br_index = [0]
+    for (text, count) in zip(split_html, range(len(split_html))):
+        if text.name == 'br' and count == len(split_html) - 1:
             br_count += 1
             br_index.append(br_count)
             break
         if text.name != 'br':
             if br_count != 0:
                 br_index.append(br_count)
+                if text.name:
+                    br_index.append(-1)
+            if br_index[-1] == -1 and br_count == 0:
+                br_index.append(0)
             br_count = 0
         else:
             br_count += 1
@@ -22,29 +28,25 @@ def fix(html, content):
 
     split_content = [_.split('\n') for _ in content_queued]
     for split_text in split_content:
-        max_insertion = 0
+        pivot = -1
         for text in split_text:
-            if text:
-                max_insertion += 1
-        if split_text[0] == '':
-            max_insertion += 1
-        if split_text[-1] == '':
-            max_insertion += 1
-        max_insertion -= 1
-
-        pivot = 0
-        insertion_count = 0
-        for text in split_text:
-            if insertion_count == max_insertion:
+            try:
+                iter_next = next(iter_index)
+            except StopIteration:
                 break
-            if text == '' and pivot == 0:
-                split_text[0] = next(iter_index) * '\n'
+            print(iter_next)
+            if iter_next == -1:
+                break
+            if iter_next == 0:
+                pivot = 0
+                continue
+            if text == '':
+                text += iter_next * '\n'
                 pivot += 1
-                insertion_count += 1
             else:
-                split_text.insert(pivot + 1, next(iter_index) * '\n')
+                split_text.insert(pivot + 1, iter_next * '\n')
                 pivot += 2
-                insertion_count += 1
+            print(split_text)
         if split_text[-1] == '':
             split_text.remove('')
 
@@ -57,6 +59,8 @@ def fix(html, content):
 
     iter_parsed_content = iter(parsed_content)
     for item in content:
+        if item['type'] == 'text' and item['content'] == '\n':
+            continue
         if item['type'] == 'text' and '\n' in item['content']:
             item['content'] = next(iter_parsed_content)
 
