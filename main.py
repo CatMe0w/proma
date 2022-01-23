@@ -5,6 +5,7 @@ import time
 import util.crawler as crawler
 import util.content_parser as content_parser
 import util.album_fix as album_fix
+import util.newline_fix as newline_fix
 from pathlib import Path
 from datetime import datetime
 from bs4 import BeautifulSoup, Comment
@@ -290,7 +291,13 @@ for thread_id in thread_ids:
                 tail,
                 post_id
             ))
-            # TODO: 换行符修复
+            # 换行符修复
+            content_html = BeautifulSoup(json.loads(post['data-field'])['content'], 'html.parser')
+            content_db = json.loads(db.execute('select content from post where id = ?', post_id).fetchall()[0][0])
+            db.execute('update post set content = ? where id = ?', (
+                newline_fix.fix(content_html, content_db),
+                post_id
+            ))
 
         conn.commit()
 
@@ -298,4 +305,3 @@ for thread_id in thread_ids:
             page += 1
         else:
             break
-
