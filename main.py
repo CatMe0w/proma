@@ -292,7 +292,7 @@ for thread_id in thread_ids:
                 post_id
             ))
             # 换行符修复
-            content_html = BeautifulSoup(json.loads(post['data-field'])['content'], 'html.parser')
+            content_html = BeautifulSoup(json.loads(post['data-field'])['content']['content'], 'html.parser')
             content_db = json.loads(db.execute('select content from post where id = ?', post_id).fetchall()[0][0])
             db.execute('update post set content = ? where id = ?', (
                 newline_fix.fix(content_html, content_db),
