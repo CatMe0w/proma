@@ -5,6 +5,8 @@ def fix(html, content):
             continue
         if item['type'] == 'text' and '\n' in item['content']:
             content_queued.append(item['content'])
+    if not content_queued:
+        return content
 
     split_html = [_ for _ in html.descendants]
     br_count = 0
