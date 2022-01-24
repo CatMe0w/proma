@@ -5,7 +5,6 @@ import time
 import util.crawler as crawler
 import util.content_parser as content_parser
 import util.album_fix as album_fix
-import util.newline_fix as newline_fix
 from pathlib import Path
 from datetime import datetime
 from bs4 import BeautifulSoup, Comment
@@ -160,7 +159,7 @@ for thread_id in thread_ids:
                 post['id'],
                 post['floor'],
                 post['author_id'],
-                content_parser.parse(post['content']),
+                None,
                 post_time,
                 post['sub_post_number'],
                 None,
@@ -286,18 +285,20 @@ for thread_id in thread_ids:
             tail = post.find('span', class_='tail-info').get_text()
             if tail.endswith('楼'):
                 tail = None
-            db.execute('update post set signature = ?, tail = ? where id = ?', (
-                signature,
-                tail,
-                post_id
-            ))
-            # 换行符修复
-            content_html = BeautifulSoup(json.loads(post['data-field'])['content']['content'], 'html.parser')
-            content_db = json.loads(db.execute('select content from post where id = ?', (post_id,)).fetchall()[0][0])
-            db.execute('update post set content = ? where id = ?', (
-                newline_fix.fix(content_html, content_db),
-                post_id
-            ))
+            if db.execute('select content from post where id = ?', (post_id,)).fetchall()[0][0] is not None:
+                db.execute('update post set signature = ?, tail = ? where id = ?', (
+                    signature,
+                    tail,
+                    post_id
+                ))
+            else:
+                content = json.dumps({'type': 'raw', 'content': str(post.find('div', class_='d_post_content'))})
+                db.execute('update post set content = ?, signature = ?, tail = ? where id = ?', (
+                    content,
+                    signature,
+                    tail,
+                    post_id
+                ))
 
         conn.commit()
 

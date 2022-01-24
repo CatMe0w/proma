@@ -1,3 +1,4 @@
+# Deprecated
 def fix(html, content):
     content_queued = []
     for item in content:
