@@ -283,7 +283,7 @@ for thread_id in thread_ids:
             if signature is not None:
                 signature = signature['src']
             tail = post.find('span', class_='tail-info').get_text()
-            if tail.endswith('楼'):
+            if tail.endswith('楼') or tail.endswith('本楼含有高级字体'):
                 tail = None
             if db.execute('select content from post where id = ?', (post_id,)).fetchall()[0][0] is not None:
                 db.execute('update post set signature = ?, tail = ? where id = ?', (
