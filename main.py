@@ -4,7 +4,8 @@ import pytz
 import sqlite3
 import time
 import util.crawler as crawler
-import util.content_parser as content_parser
+import util.content_parser_mobile as content_parser_mobile
+import util.content_parser_web as content_parser_web
 import util.album_fix as album_fix
 from pathlib import Path
 from datetime import datetime
@@ -159,7 +160,7 @@ def main(TIEBA_NAME, MAX_PAGE):
                     post['id'],
                     post['floor'],
                     post['author_id'],
-                    None,
+                    content_parser_mobile.parse(post['content']),
                     post_time,
                     post['sub_post_number'],
                     None,
@@ -206,7 +207,7 @@ def main(TIEBA_NAME, MAX_PAGE):
                             # Why "or ignore": 若某next_page_post_id存在楼中楼，则这些楼中楼也会重复
                             comment['id'],
                             comment['author']['id'],
-                            content_parser.parse(comment['content']),
+                            content_parser_mobile.parse(comment['content']),
                             comment_time,
                             comment_data['post']['id']
                         ))
@@ -285,16 +286,20 @@ def main(TIEBA_NAME, MAX_PAGE):
                 tail = post.find('span', class_='tail-info').get_text()
                 if tail.endswith('楼') or tail.endswith('本楼含有高级字体'):
                     tail = None
-                if db.execute('select content from post where id = ?', (post_id,)).fetchall()[0][0] is not None:
+
+                # 修复正文换行符、加粗与红字
+                content_db = db.execute('select content from post where id = ?', (post_id,)).fetchall()[0][0]
+                content_web = post.find('div', class_='d_post_content')
+                content_fixed = content_parser_web.parse_and_fix(content_web, content_db)
+                if content_fixed is None:
                     db.execute('update post set signature = ?, tail = ? where id = ?', (
                         signature,
                         tail,
                         post_id
                     ))
                 else:
-                    content = json.dumps({'type': 'raw', 'content': str(post.find('div', class_='d_post_content'))})
                     db.execute('update post set content = ?, signature = ?, tail = ? where id = ?', (
-                        content,
+                        content_fixed,
                         signature,
                         tail,
                         post_id
