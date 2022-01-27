@@ -44,7 +44,7 @@ def parse_video(item):
 def parse(data):
     parsed_data = []
     for item in data:
-        if item['type'] == '0' or item['type'] == '9':  # 0是一般文本，9是“电话号码”（连续数字），一律按纯文本处理即可
+        if item['type'] == '0' or item['type'] == '9' or item['type'] == '18':  # 0是一般文本，9是“电话号码”（连续数字），18是hashtag，一律按纯文本处理即可
             parsed_data.append({'type': 'text', 'content': item['text']})
         if item['type'] == '1':
             parsed_data.append({'type': 'url', 'content': parse_url(item)})
