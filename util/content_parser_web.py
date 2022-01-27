@@ -16,7 +16,6 @@ def parse_and_fix(html, content_db):
         if not item.name:
             if is_initial:
                 parsed_data.append({'type': 'text', 'content': item.string.lstrip()})
-                is_initial = False
             elif parsed_data[-1]['type'] == 'text':
                 parsed_data[-1]['content'] += item.string
             else:
@@ -48,6 +47,7 @@ def parse_and_fix(html, content_db):
                     parsed_data[-1]['content'] += item.string
                 else:
                     parsed_data.append({'type': 'text', 'content': item.string})
+        is_initial = False
 
     extra_data = []
     for item in content_db:
