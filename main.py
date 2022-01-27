@@ -14,7 +14,7 @@ from bs4 import BeautifulSoup, Comment
 
 
 def main(tieba_name, max_page):
-    logging.basicConfig(level=logging.INFO)
+    logging.basicConfig(filename='proma.log', format='%(asctime)s | %(levelname)s: %(message)s', level=logging.INFO)
     logging.info('''
     Starting proma
     
@@ -66,6 +66,7 @@ def main(tieba_name, max_page):
 
     # 获取帖子目录
     # 帖子目录（吧主页）仅采集web端
+    logging.info('Stage 1: Getting thread lists')
     Path("./proma-raw/threads").mkdir(parents=True, exist_ok=True)
 
     for page in range(1, max_page + 1):
@@ -122,8 +123,10 @@ def main(tieba_name, max_page):
                 is_good
             ))
         conn.commit()
+    logging.info('Finished getting thread lists')
 
     # 获取帖子内容
+    logging.info('Stage 2: Getting posts & comments')
     thread_ids = [_[0] for _ in db.execute('select id from thread')]
 
     for thread_id in thread_ids:
@@ -224,17 +227,19 @@ def main(tieba_name, max_page):
                 pseudo_page += 1
             else:
                 break
+    logging.info('Finished getting posts & comments')
 
     # 修复图片帖子
     # 移动端接口获取的图片帖子内容为空
+    logging.info('Stage 3: Fixing image posts')
     params = (
         ('kw', tieba_name),
         ('ie', 'utf-8'),
         ('tab', 'album'),
     )
 
-    logging.info("Preparing to fix albums")
-    Path("./proma-raw/albums").mkdir(parents=True, exist_ok=True)
+    logging.info('Getting album catalog')
+    Path('./proma-raw/albums').mkdir(parents=True, exist_ok=True)
     response = crawler.nice_get('https://tieba.baidu.com/f', headers=crawler.STANDARD_HEADERS, params=params)
 
     with open('./proma-raw/albums/catalog.html', 'wb') as f:
@@ -268,9 +273,11 @@ def main(tieba_name, max_page):
             thread_id
         ))
         conn.commit()
+    logging.info('Finished fixing albums')
 
     # 补完post表
     # 通过web版补充移动端缺失的正文换行符、签名档、小尾巴（即“来自掌上百度”或“来自Android客户端”等）
+    logging.info('Stage 4: Fixing posts')
     for thread_id in thread_ids:
         page = 1
         while True:
@@ -313,6 +320,8 @@ def main(tieba_name, max_page):
                 page += 1
             else:
                 break
+    logging.info('Finished fixing posts')
+    logging.info('All done! Have fun!')
 
 
 if __name__ == '__main__':
