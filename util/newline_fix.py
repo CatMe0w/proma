@@ -37,7 +37,7 @@ def fix(html, content):
                 iter_next = next(iter_index)
             except StopIteration:
                 break
-            print(iter_next)
+            # print(iter_next)
             if iter_next == -1:
                 break
             if iter_next == 0:
@@ -49,7 +49,7 @@ def fix(html, content):
             else:
                 split_text.insert(pivot + 1, iter_next * '\n')
                 pivot += 2
-            print(split_text)
+            # print(split_text)
         if split_text[-1] == '':
             split_text.remove('')
 

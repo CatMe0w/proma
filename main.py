@@ -3,6 +3,7 @@ import sys
 import pytz
 import sqlite3
 import time
+import logging
 import util.crawler as crawler
 import util.content_parser_mobile as content_parser_mobile
 import util.content_parser_web as content_parser_web
@@ -13,7 +14,8 @@ from bs4 import BeautifulSoup, Comment
 
 
 def main(tieba_name, max_page):
-    print('''
+    logging.basicConfig(level=logging.INFO)
+    logging.info('''
     Starting proma
     
     Target: {}
@@ -74,7 +76,7 @@ def main(tieba_name, max_page):
             ('pn', str(pn_param)),
         )
 
-        print("Current page: threads, {} of {}".format(page, max_page))
+        logging.info("Current page: threads, {} of {}".format(page, max_page))
         response = crawler.nice_get('https://tieba.baidu.com/f', headers=crawler.STANDARD_HEADERS, params=params)
 
         content = response.content
@@ -136,7 +138,7 @@ def main(tieba_name, max_page):
                     if post_data['error_code'] != '0':
                         raise ValueError
                 except (ValueError, UnicodeDecodeError):
-                    print('Bad response, wait for 5s.')
+                    logging.warning('Bad response, wait for 5s.')
                     time.sleep(5)
                 else:
                     break
@@ -184,7 +186,7 @@ def main(tieba_name, max_page):
                             if comment_data['error_code'] != '0':
                                 raise ValueError
                         except (ValueError, UnicodeDecodeError):
-                            print('Bad response, wait for 5s.')
+                            logging.warning('Bad response, wait for 5s.')
                             time.sleep(5)
                         else:
                             break
@@ -231,7 +233,7 @@ def main(tieba_name, max_page):
         ('tab', 'album'),
     )
 
-    print("Preparing to fix albums")
+    logging.info("Preparing to fix albums")
     Path("./proma-raw/albums").mkdir(parents=True, exist_ok=True)
     response = crawler.nice_get('https://tieba.baidu.com/f', headers=crawler.STANDARD_HEADERS, params=params)
 
@@ -256,7 +258,7 @@ def main(tieba_name, max_page):
             ('pe', '1000'),
             ('info', '1'),
         )
-        print('Current page: albums, thread_id {}'.format(thread_id))
+        logging.info('Current page: albums, thread_id {}'.format(thread_id))
         response = crawler.nice_get('https://tieba.baidu.com/photo/g/bw/picture/list', headers=crawler.STANDARD_HEADERS, params=params)
         with open('./proma-raw/albums/{}.json'.format(thread_id), 'wb') as f:
             f.write(response.content)

@@ -1,6 +1,7 @@
 import time
 import hashlib
 import requests
+import logging
 from pathlib import Path
 
 STANDARD_HEADERS = {
@@ -29,11 +30,11 @@ def nice_get(url, headers=None, params=None):
             if response.status_code != 200:
                 raise ValueError
         except requests.exceptions.Timeout:
-            print('Remote is not responding, sleep for 30s.')
+            logging.warning('Remote is not responding, sleep for 30s.')
             time.sleep(30)
             continue
         except ValueError:
-            print('Rate limit exceeded, sleep for 30s.')
+            logging.warning('Rate limit exceeded, sleep for 30s.')
             time.sleep(30)
             continue
         else:
@@ -47,11 +48,11 @@ def nice_post(url, data=None):
             if response.status_code != 200:
                 raise ValueError
         except requests.exceptions.Timeout:
-            print('Remote is not responding, sleep for 30s.')
+            logging.warning('Remote is not responding, sleep for 30s.')
             time.sleep(30)
             continue
         except ValueError:
-            print('Rate limit exceeded, sleep for 30s.')
+            logging.warning('Rate limit exceeded, sleep for 30s.')
             time.sleep(30)
             continue
         else:
@@ -72,7 +73,7 @@ def add_sign(data):
 
 def get_thread_list_mobile(tieba_name, page, max_page):
     # 从移动端接口获取帖子目录，但由于存在移动端不可见的帖子，该函数目前不再使用
-    print('Current page: threads, {} of {}, using mobile api'.format(page, max_page))
+    logging.info('Current page: threads, {} of {}, using mobile api'.format(page, max_page))
 
     data = {
         'kw': str(tieba_name),
@@ -91,7 +92,7 @@ def get_thread_list_mobile(tieba_name, page, max_page):
 
 def get_post_mobile(thread_id, pseudo_page, post_id=None):
     # 获取帖子内容的移动端接口没有翻页参数，只能通过指定最后一层楼的post_id，来获取这一层楼往后的30层楼，以此达到翻页效果
-    print('Current page: posts, thread_id {}, page {}, using mobile api'.format(thread_id, pseudo_page))
+    logging.info('Current page: posts, thread_id {}, page {}, using mobile api'.format(thread_id, pseudo_page))
 
     if post_id is None:
         data = {
@@ -114,7 +115,7 @@ def get_post_mobile(thread_id, pseudo_page, post_id=None):
 
 
 def get_comment_mobile(thread_id, post_id, page):
-    print('Current page: comments, thread_id {}, post_id {}, page {}, using mobile api'.format(thread_id, post_id, page))
+    logging.info('Current page: comments, thread_id {}, post_id {}, page {}, using mobile api'.format(thread_id, post_id, page))
 
     data = {
         'kz': str(thread_id),
@@ -133,7 +134,7 @@ def get_comment_mobile(thread_id, post_id, page):
 
 # 以下函数用于从网页端（电脑版）获取数据
 def get_post_web(thread_id, page):
-    print('Current page: posts, thread_id {}, page {}'.format(thread_id, page))
+    logging.info('Current page: posts, thread_id {}, page {}'.format(thread_id, page))
 
     params = (
         ('pn', str(page)),
@@ -149,7 +150,7 @@ def get_post_web(thread_id, page):
 # 以下两个函数不一定用得上，移动端接口的数据完整性或许已经可以满足需求
 def get_totalcomment_web(thread_id, page):
     # "totalComment"是在帖子加载时就立即发送的XHR，返回内容为这一页中，每一个楼中楼的前10条回复，格式为JSON
-    print('Current page: totalComments, thread_id {}, page {}'.format(thread_id, page))
+    logging.info('Current page: totalComments, thread_id {}, page {}'.format(thread_id, page))
 
     params = (
         ('tid', str(thread_id)),
@@ -165,7 +166,7 @@ def get_totalcomment_web(thread_id, page):
 
 def get_comment_web(thread_id, post_id, page):
     # 获取特定楼中楼某一页的回复，格式为HTML
-    print('Current page: thread_id {}, post_id {}, page {}'.format(thread_id, post_id, page))
+    logging.info('Current page: thread_id {}, post_id {}, page {}'.format(thread_id, post_id, page))
 
     params = (
         ('tid', str(thread_id)),
