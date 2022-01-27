@@ -12,7 +12,7 @@ from datetime import datetime
 from bs4 import BeautifulSoup, Comment
 
 
-def main(TIEBA_NAME, MAX_PAGE):
+def main(tieba_name, max_page):
     print('''
     Starting proma
     
@@ -20,7 +20,7 @@ def main(TIEBA_NAME, MAX_PAGE):
     Max page: {}
     
     Weigh anchor!
-    '''.format(TIEBA_NAME, MAX_PAGE))
+    '''.format(tieba_name, max_page))
 
     conn = sqlite3.connect('proma.db')
     db = conn.cursor()
@@ -66,15 +66,15 @@ def main(TIEBA_NAME, MAX_PAGE):
     # 帖子目录（吧主页）仅采集web端
     Path("./proma-raw/threads").mkdir(parents=True, exist_ok=True)
 
-    for page in range(1, MAX_PAGE + 1):
+    for page in range(1, max_page + 1):
         pn_param = (page - 1) * 50
         params = (
-            ('kw', TIEBA_NAME),
+            ('kw', tieba_name),
             ('ie', 'utf-8'),
             ('pn', str(pn_param)),
         )
 
-        print("Current page: threads, {} of {}".format(page, MAX_PAGE))
+        print("Current page: threads, {} of {}".format(page, max_page))
         response = crawler.nice_get('https://tieba.baidu.com/f', headers=crawler.STANDARD_HEADERS, params=params)
 
         content = response.content
@@ -226,7 +226,7 @@ def main(TIEBA_NAME, MAX_PAGE):
     # 修复图片帖子
     # 移动端接口获取的图片帖子内容为空
     params = (
-        ('kw', TIEBA_NAME),
+        ('kw', tieba_name),
         ('ie', 'utf-8'),
         ('tab', 'album'),
     )
@@ -247,7 +247,7 @@ def main(TIEBA_NAME, MAX_PAGE):
         thread_id = album['href'].strip('/p/')
 
         params = (
-            ('kw', TIEBA_NAME),
+            ('kw', tieba_name),
             ('alt', 'jview'),
             ('rn', '200'),
             ('tid', str(thread_id)),
