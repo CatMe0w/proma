@@ -5,10 +5,6 @@ def parse_image(url):
     return 'https://imgsrc.baidu.com/forum/pic/item/' + url.split('/')[-1]
 
 
-def parse_emoticon(url):
-    return {'id': url.split('/')[-1].split('.')[0], 'description': None}
-
-
 def parse_and_fix(html, content_db):
     for item in content_db:
         if item['type'] == 'video' or item['type'] == 'audio' or item['type'] == 'album':
@@ -18,11 +14,11 @@ def parse_and_fix(html, content_db):
     is_initial = True
     for item in html.contents:
         if not item.name:
-            if parsed_data[-1]['type'] == 'text':
-                parsed_data[-1]['content'] += item.string
-            elif is_initial:
+            if is_initial:
                 parsed_data.append({'type': 'text', 'content': item.string.lstrip()})
                 is_initial = False
+            elif parsed_data[-1]['type'] == 'text':
+                parsed_data[-1]['content'] += item.string
             else:
                 parsed_data.append({'type': 'text', 'content': item.string})
         if item.name == 'br':
@@ -32,8 +28,9 @@ def parse_and_fix(html, content_db):
                 parsed_data.append({'type': 'text', 'content': '\n'})
         if item.name == 'strong':
             parsed_data.append({'type': 'text_bold', 'content': item.string})
-        if item['class'] == 'edit_font_color':
-            parsed_data.append({'type': 'text_red', 'content': item.string})
+        if item.name == 'span':
+            if item['class'] == 'edit_font_color':
+                parsed_data.append({'type': 'text_red', 'content': item.string})
         if item.name == 'img':
             if item['class'] == 'BDE_Image' or item['class'] == 'BDE_Meme' or item['class'] == 'BDE_Graffiti':
                 parsed_data.append({'type': 'image', 'content': parse_image(item['src'])})
@@ -42,10 +39,15 @@ def parse_and_fix(html, content_db):
             elif item['class'] == 'BDE_Smiley':
                 parsed_data.append({'type': 'emoticon', 'content': None})  # 不实现，下同，将通过移动端数据修复
         if item.name == 'a':
-            if item['class'] == 'at':
+            if item.get('class') == 'at':
                 parsed_data.append({'type': 'username', 'content': None})
-            elif item['class'] == 'j-no-opener-url':
+            elif item.get('class') == 'j-no-opener-url':
                 parsed_data.append({'type': 'url', 'content': None})
+            else:
+                if parsed_data[-1]['type'] == 'text':
+                    parsed_data[-1]['content'] += item.string
+                else:
+                    parsed_data.append({'type': 'text', 'content': item.string})
 
     extra_data = []
     for item in content_db:
