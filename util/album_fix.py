@@ -6,7 +6,7 @@ def fix(raw_content):
     parsed_picture_list = []
     for item in original_picture_list:
         parsed_picture_list.append({
-            'id': item['pic_id'],
+            'url': 'https://imgsrc.baidu.com/forum/pic/item/' + item['pic_id'] + '.jpg',
             'description': item['descr']
         })
     parsed_data = {'type': 'album', 'content': parsed_picture_list}
