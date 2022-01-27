@@ -315,5 +315,8 @@ def main(tieba_name, max_page):
                 break
 
 
-if '__name__' == '__main__':
-    main(sys.argv[1], sys.argv[2])
+if __name__ == '__main__':
+    if not sys.argv[2:]:
+        print('Usage: python3 {} <tieba_name> <max_page>'.format(sys.argv[0]))
+        exit(1)
+    main(str(sys.argv[1]), int(sys.argv[2]))
