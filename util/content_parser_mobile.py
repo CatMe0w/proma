@@ -1,4 +1,5 @@
 import json
+import logging
 from urllib.parse import unquote
 
 
@@ -46,16 +47,18 @@ def parse(data):
     for item in data:
         if item['type'] == '0' or item['type'] == '9' or item['type'] == '18':  # 0是一般文本，9是“电话号码”（连续数字），18是hashtag，一律按纯文本处理即可
             parsed_data.append({'type': 'text', 'content': item['text']})
-        if item['type'] == '1':
+        elif item['type'] == '1':
             parsed_data.append({'type': 'url', 'content': parse_url(item)})
-        if item['type'] == '2':
+        elif item['type'] == '2':
             parsed_data.append({'type': 'emoticon', 'content': parse_emoticon(item)})
-        if item['type'] == '3' or item['type'] == '11' or item['type'] == '20':
+        elif item['type'] == '3' or item['type'] == '11' or item['type'] == '20':
             parsed_data.append({'type': 'image', 'content': parse_image(item)})
-        if item['type'] == '4':
+        elif item['type'] == '4':
             parsed_data.append({'type': 'username', 'content': parse_username(item)})
-        if item['type'] == '5':
+        elif item['type'] == '5':
             parsed_data.append({'type': 'video', 'content': parse_video(item)})
-        if item['type'] == '10':
+        elif item['type'] == '10':
             parsed_data.append({'type': 'audio', 'content': item['voice_md5']})
+        else:
+            logging.critical('Unknown type: ' + item['type'])
     return json.dumps(parsed_data, ensure_ascii=False)
