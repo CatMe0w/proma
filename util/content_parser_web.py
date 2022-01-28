@@ -1,4 +1,5 @@
 import json
+import logging
 
 
 def parse_image(url):
@@ -20,33 +21,35 @@ def parse_and_fix(html, content_db):
                 parsed_data[-1]['content'] += item.string
             else:
                 parsed_data.append({'type': 'text', 'content': item.string})
-        if item.name == 'br':
+        elif item.name == 'br':
             if parsed_data[-1]['type'] == 'text':
                 parsed_data[-1]['content'] += '\n'
             else:
                 parsed_data.append({'type': 'text', 'content': '\n'})
-        if item.name == 'strong':
+        elif item.name == 'strong':
             parsed_data.append({'type': 'text_bold', 'content': item.string})
-        if item.name == 'span':
-            if item['class'] == 'edit_font_color':
+        elif item.name == 'span':
+            if item['class'] == ['edit_font_color']:
                 parsed_data.append({'type': 'text_red', 'content': item.string})
-        if item.name == 'img':
-            if item['class'] == 'BDE_Image' or item['class'] == 'BDE_Meme' or item['class'] == 'BDE_Graffiti':
+        elif item.name == 'img':
+            if item['class'] == ['BDE_Image'] or item['class'] == ['BDE_Meme'] or item['class'] == ['BDE_Graffiti']:
                 parsed_data.append({'type': 'image', 'content': parse_image(item['src'])})
-            elif item['class'] == 'BDE_Smiley3':
+            elif item['class'] == ['BDE_Smiley3']:
                 parsed_data.append({'type': 'image', 'content': item['src']})
-            elif item['class'] == 'BDE_Smiley':
+            elif item['class'] == ['BDE_Smiley']:
                 parsed_data.append({'type': 'emoticon', 'content': None})  # 不实现，下同，将通过移动端数据修复
-        if item.name == 'a':
-            if item.get('class') == 'at':
+        elif item.name == 'a':
+            if item.get('class') == ['at']:
                 parsed_data.append({'type': 'username', 'content': None})
-            elif item.get('class') == 'j-no-opener-url':
+            elif item.get('class') == ['j-no-opener-url']:
                 parsed_data.append({'type': 'url', 'content': None})
             else:
                 if parsed_data[-1]['type'] == 'text':
                     parsed_data[-1]['content'] += item.string
                 else:
                     parsed_data.append({'type': 'text', 'content': item.string})
+        else:
+            logging.critical('Unhandled element: ' + item)
         is_initial = False
 
     extra_data = []
