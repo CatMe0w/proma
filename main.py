@@ -14,7 +14,14 @@ from bs4 import BeautifulSoup, Comment
 
 
 def main(tieba_name, max_page):
-    logging.basicConfig(filename='proma.log', format='%(asctime)s | %(levelname)s: %(message)s', level=logging.INFO)
+    logging.basicConfig(
+        format='%(asctime)s [%(levelname)s] %(message)s',
+        level=logging.INFO,
+        handlers=[
+            logging.FileHandler("proma.log"),
+            logging.StreamHandler()
+        ])
+
     logging.info('''
     Starting proma
     
