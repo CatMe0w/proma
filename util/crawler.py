@@ -142,7 +142,7 @@ def get_post_web(thread_id, page):
     response = nice_get('https://tieba.baidu.com/p/' + str(thread_id), headers=STANDARD_HEADERS, params=params)
 
     Path('./proma-raw/posts/web/{}'.format(thread_id)).mkdir(parents=True, exist_ok=True)
-    with open('./proma-raw/posts/web/{}/{}.json'.format(thread_id, page), 'wb') as f:
+    with open('./proma-raw/posts/web/{}/{}.html'.format(thread_id, page), 'wb') as f:
         f.write(response.content)
     return response
 
