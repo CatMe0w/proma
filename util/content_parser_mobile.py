@@ -60,5 +60,5 @@ def parse(data):
         elif item['type'] == '10':
             parsed_data.append({'type': 'audio', 'content': item['voice_md5']})
         else:
-            logging.critical('Unknown type: ' + item['type'])
+            logging.critical('Unknown type: {}'.format(item['type']))
     return json.dumps(parsed_data, ensure_ascii=False)

@@ -49,7 +49,7 @@ def parse_and_fix(html, content_db):
                 else:
                     parsed_data.append({'type': 'text', 'content': item.string})
         else:
-            logging.critical('Unhandled element: ' + item)
+            logging.critical('Unhandled element: {}'.format(item))
         is_initial = False
 
     extra_data = []
