@@ -328,6 +328,7 @@ def main(tieba_name, max_page):
             else:
                 break
     logging.info('Finished fixing posts')
+    conn.close()
     logging.info('All done! Have fun!')
 
 
