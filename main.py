@@ -300,7 +300,7 @@ def main(tieba_name, max_page):
                 if signature is not None:
                     signature = signature['src']
                 tail = post.find('span', class_='tail-info').get_text()
-                if tail.endswith('楼') or tail.endswith('本楼含有高级字体'):
+                if tail.endswith('楼'):
                     tail = None
 
                 # 修复正文换行符、加粗与红字
