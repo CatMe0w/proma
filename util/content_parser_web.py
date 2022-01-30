@@ -32,7 +32,7 @@ def parse_and_fix(html, content_db):
             if item['class'] == ['edit_font_color']:
                 parsed_data.append({'type': 'text_red', 'content': item.string})
         elif item.name == 'img':
-            if item['class'] == ['BDE_Image'] or item['class'] == ['BDE_Meme'] or item['class'] == ['BDE_Graffiti']:
+            if item['class'] == ['BDE_Image'] or item['class'] == ['BDE_Meme'] or item['class'] == ['BDE_Graffiti'] or item['class'] == ['BDE_Smiley2']:
                 parsed_data.append({'type': 'image', 'content': parse_image(item['src'])})
             elif item['class'] == ['BDE_Smiley3']:
                 parsed_data.append({'type': 'image', 'content': item['src']})
