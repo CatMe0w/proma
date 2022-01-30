@@ -14,7 +14,7 @@ def parse_and_fix(html, content_db, flag_bad_client):
     parsed_data = []
     is_initial = True
     for item in html.contents:
-        if not item.name:  # 纯文本
+        if not item.name or item.get('class') == ['edit_font_normal']:  # 纯文本
             if is_initial:
                 parsed_data.append({'type': 'text', 'content': item.string.lstrip()})
             elif parsed_data[-1]['type'] == 'text':
@@ -59,7 +59,7 @@ def parse_and_fix(html, content_db, flag_bad_client):
                 else:
                     parsed_data.append({'type': 'text', 'content': item.string})
 
-        elif item.get('class') == ['save_face_post']:  # 挽尊卡
+        elif item.get('class') == ['save_face_post'] or item.get('class') == ['summary'] or item.get('class') == ['refer_url']:  # 挽尊卡与转发帖子
             parsed_data.append({'type': 'text', 'content': item.text})
 
         elif item.name == 'embed':  # Flash音乐播放器，丢弃
