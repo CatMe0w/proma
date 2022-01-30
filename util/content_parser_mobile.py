@@ -51,7 +51,7 @@ def parse(data):
             parsed_data.append({'type': 'url', 'content': parse_url(item)})
         elif item['type'] == '2':
             parsed_data.append({'type': 'emoticon', 'content': parse_emoticon(item)})
-        elif item['type'] == '3' or item['type'] == '11' or item['type'] == '20':
+        elif item['type'] == '3' or item['type'] == '11' or item['type'] == '16' or item['type'] == '20':
             parsed_data.append({'type': 'image', 'content': parse_image(item)})
         elif item['type'] == '4':
             parsed_data.append({'type': 'username', 'content': parse_username(item)})
