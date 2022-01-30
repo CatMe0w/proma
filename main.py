@@ -303,10 +303,15 @@ def main(tieba_name, max_page):
                 if tail.endswith('楼'):
                     tail = None
 
+                if tail == '来自手机贴吧':
+                    flag_bad_client = True  # 见content_parser_web.py注释
+                else:
+                    flag_bad_client = False
+
                 # 修复正文换行符、加粗与红字
                 content_db = json.loads(db.execute('select content from post where id = ?', (post_id,)).fetchall()[0][0])
                 content_web = post.find('div', class_='d_post_content')
-                content_fixed = content_parser_web.parse_and_fix(content_web, content_db)
+                content_fixed = content_parser_web.parse_and_fix(content_web, content_db, flag_bad_client)
                 if content_fixed is None:
                     db.execute('update post set signature = ?, tail = ? where id = ?', (
                         signature,
