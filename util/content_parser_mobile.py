@@ -4,7 +4,7 @@ from urllib.parse import unquote
 
 
 def purify_url(url):
-    if url.startswith('http://tieba.baidu.com/'):
+    if url.startswith('http://tieba.baidu.com/') and 'checkurl' not in url:
         return url.split('?share=9105&fr=share')[0].replace('http://', 'https://')
     return unquote(url.split('checkurl?url=')[-1].split('&meta=1&urlrefer=')[0])
 
