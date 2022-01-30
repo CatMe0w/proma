@@ -229,7 +229,7 @@ def main(tieba_name, max_page):
                     else:
                         current_page += 1
 
-            if post_data['page']['has_more'] == '1':
+            if int(post_data['page']['total_page']) > int(post_data['page']['current_page']):
                 next_page_post_id = post_data['post_list'][-1]['id']
                 pseudo_page += 1
             else:
