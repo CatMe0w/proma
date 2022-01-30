@@ -275,7 +275,7 @@ def main(tieba_name, max_page):
         with open('./proma-raw/albums/{}.json'.format(thread_id), 'wb') as f:
             f.write(response.content)
 
-        db.execute('update post set content = ? where thread_id = ?', (
+        db.execute('update post set content = ? where thread_id = ? and floor = 1', (
             album_fix.fix(response.content),
             thread_id
         ))
