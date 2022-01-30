@@ -226,6 +226,10 @@ def main(tieba_name, max_page):
                     conn.commit()
                     if current_page == int(comment_data['page']['total_page']):
                         break
+                    if int(comment_data['page']['total_page']) == 0:
+                        logging.critical('Malformed data received. Rate limit probably exceeded. Sleep for 30s.')
+                        time.sleep(30)
+                        continue
                     else:
                         current_page += 1
 
