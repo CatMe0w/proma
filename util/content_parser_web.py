@@ -71,6 +71,10 @@ def parse_and_fix(html, content_db):
     iter_extra_data = iter(extra_data)
     for item in parsed_data:
         if item['type'] == 'emoticon' or item['type'] == 'username' or item['type'] == 'url':
-            item['content'] = next(iter_extra_data)['content']
+            try:
+                item['content'] = next(iter_extra_data)['content']
+            except StopIteration:
+                logging.critical('extra_data exhausted. Using existed db data. db data: {} parsed web data: {}'.format(content_db, parsed_data))
+                return None
 
     return json.dumps(parsed_data, ensure_ascii=False)
