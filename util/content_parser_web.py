@@ -59,6 +59,9 @@ def parse_and_fix(html, content_db):
             logging.critical('Unhandled element: {}'.format(item))
         is_initial = False
 
+    if parsed_data[0] == {'type': 'text', 'content': ''}:
+        parsed_data.pop(0)
+
     extra_data = []
     for item in content_db:
         if item['type'] == 'emoticon' or item['type'] == 'username' or item['type'] == 'url':
