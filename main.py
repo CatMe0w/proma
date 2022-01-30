@@ -18,7 +18,7 @@ def main(tieba_name, max_page):
         format='%(asctime)s [%(levelname)s] %(message)s',
         level=logging.INFO,
         handlers=[
-            logging.FileHandler("proma.log"),
+            logging.FileHandler('proma.log', encoding='utf-8'),
             logging.StreamHandler()
         ])
 
