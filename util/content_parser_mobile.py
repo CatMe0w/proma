@@ -20,12 +20,13 @@ def parse_emoticon(item):
 def parse_image(item):
     if item['type'] == '3':  # 一般图片
         try:
-            if item['origin_src'].startswith('\/\/tb2.bdstatic.com'):  # 无法解释
+            if item['origin_src'].startswith('//tb'):  # 无法解释
                 return 'https:' + item['origin_src']
             return item['origin_src'].replace('http://', 'https://')
         except KeyError:
             # 一些固定资源（如预设的“神来一句”）没有origin_src
-            return item['cdn_src_active'].split('&')[0].split('=')[-1].replace('http://', 'https://')  # 切掉末尾的参数，再切掉c.tieba.baidu.com域名，否则返回的内容没有意义
+            # 切掉末尾的参数，再切掉c.tieba.baidu.com域名，否则返回的内容没有意义
+            return item['cdn_src_active'].split('&')[0].split('=')[-1].replace('http://static.tieba.baidu.com', 'https://tb2.bdstatic.com')
     if item['type'] == '11':  # 奇怪的大表情
         return item['static'].replace('http://', 'https://')
     if item['type'] == '16':  # 奇怪的涂鸦
