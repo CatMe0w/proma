@@ -9,5 +9,5 @@ def fix(raw_content):
             'url': 'https://imgsrc.baidu.com/forum/pic/item/' + item['pic_id'] + '.jpg',
             'description': item['descr']
         })
-    parsed_data = {'type': 'album', 'content': parsed_picture_list}
+    parsed_data = [{'type': 'album', 'content': parsed_picture_list}]
     return json.dumps(parsed_data, ensure_ascii=False)
