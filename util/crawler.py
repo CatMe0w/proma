@@ -22,11 +22,13 @@ STANDARD_HEADERS = {
     'Accept-Language': 'zh-CN,zh;q=0.9',
 }
 
+session = requests.Session()
+
 
 def nice_get(url, headers=None, params=None):
     while True:
         try:
-            response = requests.get(url, headers=headers, params=params)
+            response = session.get(url, headers=headers, params=params)
             if response.status_code != 200:
                 raise ValueError
         except requests.exceptions.Timeout:
@@ -44,7 +46,7 @@ def nice_get(url, headers=None, params=None):
 def nice_post(url, data=None):
     while True:
         try:
-            response = requests.post(url, data=data)
+            response = session.post(url, data=data)
             if response.status_code != 200:
                 raise ValueError
         except requests.exceptions.Timeout:
