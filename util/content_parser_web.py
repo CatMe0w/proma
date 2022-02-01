@@ -9,7 +9,7 @@ def parse_image(url):
 def parse_and_fix(html, content_db, flag_bad_client):
     for item in content_db:
         if item['type'] == 'video' or item['type'] == 'audio' or item['type'] == 'album':
-            return None  # 含有以上类型的正文，不处理
+            return None  # 含有以上类型则无需修复
 
     parsed_data = []
     is_initial = True
@@ -59,8 +59,16 @@ def parse_and_fix(html, content_db, flag_bad_client):
                 else:
                     parsed_data.append({'type': 'text', 'content': item.string})
 
-        elif item.get('class') == ['save_face_post'] or item.get('class') == ['summary'] or item.get('class') == ['refer_url']:  # 挽尊卡与转发帖子
-            parsed_data.append({'type': 'text', 'content': item.text})
+        elif item.get('class') == ['save_face_post']:  # 挽尊卡
+            return None
+
+        elif item.get('class') == ['summary'] or item.get('class') == ['refer_url']:  # 转发帖子
+            if parsed_data[-1]['type'] == 'text':
+                parsed_data[-1]['content'] += item.text
+                parsed_data[-1]['content'] += '\n'
+            else:
+                parsed_data.append({'type': 'text', 'content': item.text})
+                parsed_data[-1]['content'] += '\n'
 
         elif item.name == 'embed':  # Flash音乐播放器，丢弃
             pass
@@ -76,7 +84,7 @@ def parse_and_fix(html, content_db, flag_bad_client):
             # 补充：追加pic_src_wrapper，即“通过百度相册上传”，无需修复；album_pb_comment_container，图贴相关，无需修复
 
         else:
-            logging.critical('Unhandled element: {}'.format(item))
+            logging.warning('Unhandled element: {}'.format(item))
         is_initial = False
 
     if parsed_data[0] == {'type': 'text', 'content': ''}:
@@ -92,7 +100,15 @@ def parse_and_fix(html, content_db, flag_bad_client):
             try:
                 item['content'] = next(iter_extra_data)['content']
             except StopIteration:
-                logging.critical('extra_data exhausted. Using existed db data. db data: {} parsed web data: {}'.format(content_db, parsed_data))
+                logging.warning('extra_data exhausted. Using existed db data. db data: {} parsed web data: {}'.format(content_db, parsed_data))
                 return None
+
+    try:
+        _ = next(iter_extra_data)
+    except StopIteration:
+        pass
+    else:
+        logging.warning('extra_data has something left. Using existed db data. db data: {} parsed web data: {}, next: {}'.format(content_db, parsed_data, _))
+        return None
 
     return json.dumps(parsed_data, ensure_ascii=False)
