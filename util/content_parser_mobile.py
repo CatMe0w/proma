@@ -46,6 +46,9 @@ def parse_video(item):
 def parse(data):
     parsed_data = []
     for item in data:
+        if not item.get('type'):
+            # 临时方案：百度贴吧在2022年春节期间会将正文为“新年快乐”的楼层替换为图片，同时破坏一些数据结构，暂时跳过这些，过两天应该就可以revert掉这行
+            continue
         if item['type'] == '0' or item['type'] == '9' or item['type'] == '18':  # 0是一般文本，9是“电话号码”（连续数字），18是hashtag，一律按纯文本处理即可
             parsed_data.append({'type': 'text', 'content': item['text']})
         elif item['type'] == '1':
