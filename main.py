@@ -302,7 +302,7 @@ def main(tieba_name, max_page):
                 post_id = post['data-pid']
                 signature = post.find('img', class_='j_user_sign')
                 if signature is not None:
-                    signature = signature['src']
+                    signature = signature['src'].strip('?v=tbs')
                 tail = post.find('span', class_='tail-info').get_text()
                 if tail.endswith('楼'):
                     tail = None
