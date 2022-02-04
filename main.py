@@ -160,7 +160,7 @@ def main(tieba_name, max_page):
                     user['id'],
                     user.get('name'),  # IP匿名用户没有name
                     user['name_show'],
-                    user['portrait']  # XXX
+                    user['portrait']
                 ))
             for post in post_data['post_list']:
                 post_time = datetime.fromtimestamp(
@@ -208,7 +208,7 @@ def main(tieba_name, max_page):
                             comment['author']['id'],
                             comment['author']['name'],
                             comment['author']['name_show'],
-                            comment['author']['portrait']  # XXX
+                            comment['author']['portrait']
                         ))
 
                         comment_time = datetime.fromtimestamp(
