@@ -275,7 +275,7 @@ def main(tieba_name, max_page):
             ('info', '1'),
         )
         logging.info('Current page: albums, thread_id {}'.format(thread_id))
-        response = crawler.nice_get('https://tieba.baidu.com/photo/g/bw/picture/list', headers=crawler.STANDARD_HEADERS, params=params)
+        response = crawler.nice_get('https://tieba.baidu.com/photo/g/bw/picture/list', headers=crawler.STANDARD_HEADERS, params=params, encoding='gbk')
         with open('./proma-raw/albums/{}.json'.format(thread_id), 'wb') as f:
             f.write(response.content)
 

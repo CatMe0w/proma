@@ -25,11 +25,11 @@ STANDARD_HEADERS = {
 session = requests.Session()
 
 
-def nice_get(url, headers=None, params=None):
+def nice_get(url, headers=None, params=None, encoding='utf-8'):
     while True:
         try:
             response = session.get(url, headers=headers, params=params)
-            if response.status_code != 200 or response.text.find('百度安全验证') != -1:
+            if response.status_code != 200 or '百度安全验证' in response.content.decode(encoding):
                 raise ValueError
         except requests.exceptions.Timeout:
             logging.warning('Remote is not responding, sleep for 30s.')
