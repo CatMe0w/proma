@@ -29,7 +29,7 @@ def nice_get(url, headers=None, params=None):
     while True:
         try:
             response = session.get(url, headers=headers, params=params)
-            if response.status_code != 200:
+            if response.status_code != 200 or response.text.find('百度安全验证') != -1:
                 raise ValueError
         except requests.exceptions.Timeout:
             logging.warning('Remote is not responding, sleep for 30s.')
