@@ -3,6 +3,7 @@ import hashlib
 import requests
 import logging
 from pathlib import Path
+import util.clash_control as clash_control
 
 STANDARD_HEADERS = {
     'Connection': 'keep-alive',
@@ -20,6 +21,7 @@ STANDARD_HEADERS = {
     'Sec-Fetch-User': '?1',
     'Sec-Fetch-Dest': 'document',
     'Accept-Language': 'zh-CN,zh;q=0.9',
+    'Host': 'tieba.baidu.com',
 }
 
 proxies = {
@@ -30,14 +32,18 @@ proxies = {
 session = requests.Session()
 
 
-def nice_get(url, headers=None, params=None, encoding='utf-8'):
+def nice_get(url, headers=None, params=None, encoding='utf-8', use_clash=True):
     while True:
         try:
-            response = session.get(url, headers=headers, params=params, proxies=proxies)
-            if response.status_code != 200 or '百度安全验证' in response.content.decode(encoding):
-                session.cookies.clear()
-                session.close()
-                raise ValueError
+            if use_clash:
+                response = requests.get(url, headers=headers, params=params, proxies=proxies)
+                if response.status_code != 200 or '百度安全验证' in response.content.decode(encoding):
+                    clash_control.switch_proxy()
+                    raise ValueError
+            else:
+                response = requests.get(url, headers=headers, params=params)
+                if response.status_code != 200 or '百度安全验证' in response.content.decode(encoding):
+                    raise ValueError
         except requests.exceptions.Timeout:
             logging.warning('Remote is not responding, sleep for 30s.')
             time.sleep(30)
