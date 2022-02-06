@@ -22,13 +22,18 @@ STANDARD_HEADERS = {
     'Accept-Language': 'zh-CN,zh;q=0.9',
 }
 
+proxies = {
+    "http": 'http://127.0.0.1:7890',
+    "https": 'http://127.0.0.1:7890'
+}
+
 session = requests.Session()
 
 
 def nice_get(url, headers=None, params=None, encoding='utf-8'):
     while True:
         try:
-            response = session.get(url, headers=headers, params=params)
+            response = session.get(url, headers=headers, params=params, proxies=proxies)
             if response.status_code != 200 or '百度安全验证' in response.content.decode(encoding):
                 session.cookies.clear()
                 session.close()
