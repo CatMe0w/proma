@@ -1,0 +1,42 @@
+name: run-proma
+
+on:
+  push:
+    tags:
+      - 'trigger-[0-9]*'
+
+jobs:
+  linux-x86_64:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+
+      - name: Install dependencies
+        run: pip install beautifulsoup4 requests pytz
+
+      - name: Set up proxies
+        run: wget https://catme0w.org/catch_me_if_you_can/config.yaml && wget https://github.com/Dreamacro/clash/releases/download/v1.9.0/clash-linux-amd64-v1.9.0.gz && gunzip clash-linux-amd64-v1.9.0.gz && chmod +x clash-linux-amd64-v1.9.0 && mkdir -p ~/.config/clash && mv config.yaml ~/.config/clash && ./clash-linux-amd64-v1.9.0 &
+
+      - name: Run proma
+        run: python main.py fursuit 34
+
+      - name: Package
+        run: tar Jcf proma-raw.tar.xz proma-raw && xz proma.db && xz proma.log
+
+      - name: Checksum
+        run: sha256sum proma-raw.tar.xz proma.db.xz proma.log.xz > checksum.txt && cat checksum.txt
+
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with:
+          name: The Showdown
+          body_path: checksum.txt
+          files: |
+            proma-raw.tar.xz
+            proma.db.xz
+            proma.log.xz
