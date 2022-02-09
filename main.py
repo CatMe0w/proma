@@ -122,7 +122,7 @@ def main(tieba_name, max_page):
             else:
                 is_good = 0
 
-            db.execute('insert into thread values (?,?,?,?,?)', (
+            db.execute('insert or ignore into thread values (?,?,?,?,?)', (
                 thread_entry['id'],
                 thread_entry['title'],
                 thread_entry['user_id'],
