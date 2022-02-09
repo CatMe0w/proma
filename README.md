@@ -26,7 +26,7 @@ In order to obtain the most complete data possible, `proma` gets data from both 
 
 `proma` runs in the following order:
 
-- Stage 1: Getting thread lists from mobile APIs
+- Stage 1: Getting thread lists from desktop websites
 
 - Stage 2: Getting posts and comments from mobile APIs
 
@@ -34,7 +34,7 @@ In order to obtain the most complete data possible, `proma` gets data from both 
 
 - Stage 4: Fixing lost data of posts from desktop websites
 
-Due to Baidu's extremely strict anti-bot rules, it's highly recommended to use a proxy pool in stage 4.
+Due to Baidu's extremely strict anti-bot rules, it's highly recommended to use a proxy pool for requests of desktop websites.
 
 ### Proxies
 
@@ -44,7 +44,7 @@ Check `util.clash_control` and edit Clash’s endpoint addresses and other argum
 
 __Note: You must start a Clash instance manually in advance of running `proma`.__
 
-If you don’t want to use proxy, switch `USE_CLASH` to `False` in `util.clash_control`.
+If you don’t want to use proxy, set `USE_CLASH` to `False` in `util.clash_control`.
 
 ## File structures
 
@@ -100,4 +100,5 @@ If you don’t want to use proxy, switch `USE_CLASH` to `False` in `util.clash_c
 |post_id|numeric|not null, foreign key references `post(id)`||
 
 ## License
+
 [MIT License](https://opensource.org/licenses/MIT)
