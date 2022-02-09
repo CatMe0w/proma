@@ -24,7 +24,7 @@ _To forethink._
 
 `proma` 按以下顺序运行：
 
-- 第一阶段：通过移动端接口，获取所有帖子的目录
+- 第一阶段：通过电脑网页版，获取所有帖子的目录
 
 - 第二阶段：通过移动端接口，获取每个帖子的楼层与楼中楼
 
@@ -32,7 +32,7 @@ _To forethink._
 
 - 第四阶段：通过电脑网页版，修复楼层中丢失的数据
 
-由于百度极为严格的反机器人机制，强烈建议在第四阶段使用代理池。
+由于百度极为严格的反机器人机制，强烈建议为电脑网页版的请求使用代理池。
 
 ### 代理
 
@@ -42,7 +42,7 @@ _To forethink._
 
 __注意：必须在运行 `proma` 之前手动开启 Clash。__
 
-若不希望使用代理，将 `util.clash_control` 中的 `USE_CLASH` 改为 `False`。
+若不希望使用代理，请将 `util.clash_control` 中的 `USE_CLASH` 改为 `False`。
 
 ## 文件结构
 
@@ -97,5 +97,6 @@ __注意：必须在运行 `proma` 之前手动开启 Clash。__
 |time|text|not null|UTC+8, yyyy-MM-dd HH:mm|
 |post_id|numeric|not null, foreign key references `post(id)`||
 
-## License
+## 开源许可
+
 [MIT License](https://opensource.org/licenses/MIT)
