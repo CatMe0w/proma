@@ -21,36 +21,40 @@ STANDARD_HEADERS = {
     'Sec-Fetch-User': '?1',
     'Sec-Fetch-Dest': 'document',
     'Accept-Language': 'zh-CN,zh;q=0.9',
-    'Host': 'tieba.baidu.com',
-}
-
-proxies = {
-    "http": 'http://127.0.0.1:7890',
-    "https": 'http://127.0.0.1:7890'
 }
 
 session = requests.Session()
 
 
-def nice_get(url, headers=None, params=None, encoding='utf-8', use_clash=True):
+def nice_get(url, headers=None, params=None, encoding='utf-8', use_clash=clash_control.USE_CLASH):
     while True:
         try:
             if use_clash:
-                response = requests.get(url, headers=headers, params=params, proxies=proxies)
-                if response.status_code != 200 or '百度安全验证' in response.content.decode(encoding):
-                    clash_control.switch_proxy()
-                    raise ValueError
+                response = session.get(url, headers=headers, params=params, proxies=clash_control.PROXIES)
             else:
-                response = requests.get(url, headers=headers, params=params)
-                if response.status_code != 200 or '百度安全验证' in response.content.decode(encoding):
-                    raise ValueError
+                response = session.get(url, headers=headers, params=params)
+            if response.status_code != 200 or '百度安全验证' in response.content.decode(encoding):
+                raise ValueError
         except requests.exceptions.Timeout:
-            logging.warning('Remote is not responding, sleep for 30s.')
-            time.sleep(30)
+            if use_clash:
+                logging.warning('Remote is not responding, retrying')
+            else:
+                logging.warning('Remote is not responding, sleep for 30s.')
+                time.sleep(30)
             continue
-        except ValueError:
-            logging.warning('Rate limit exceeded, sleep for 30s.')
-            time.sleep(30)
+        except (ValueError, requests.exceptions.TooManyRedirects, requests.exceptions.SSLError, requests.exceptions.ProxyError) as e:
+            session.cookies.clear()
+            session.close()
+            if e == ValueError or e == requests.exceptions.TooManyRedirects:
+                if use_clash:
+                    logging.warning('Rate limit exceeded, retrying')
+                else:
+                    logging.warning('Rate limit exceeded, sleep for 30s.')
+                    time.sleep(30)
+            else:
+                logging.warning('Bad proxy, picking another one')
+            if use_clash:
+                clash_control.switch_proxy()
             continue
         else:
             return response
