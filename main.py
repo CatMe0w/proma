@@ -13,7 +13,7 @@ from datetime import datetime
 from bs4 import BeautifulSoup, Comment
 
 
-def main(tieba_name, max_page):
+def main(tieba_name):
     logging.basicConfig(
         format='%(asctime)s [%(levelname)s] %(message)s',
         level=logging.INFO,
@@ -26,10 +26,9 @@ def main(tieba_name, max_page):
     Starting proma
     
     Target: {}
-    Max page: {}
     
     Weigh anchor!
-    '''.format(tieba_name, max_page))
+    '''.format(tieba_name))
 
     conn = sqlite3.connect('proma.db')
     db = conn.cursor()
@@ -76,7 +75,9 @@ def main(tieba_name, max_page):
     logging.info('Stage 1: Getting thread lists')
     Path("./proma-raw/threads").mkdir(parents=True, exist_ok=True)
 
-    for page in range(1, max_page + 1):
+    max_page = 1
+    page = 1
+    while True:
         pn_param = (page - 1) * 50
         params = (
             ('kw', tieba_name),
@@ -130,6 +131,14 @@ def main(tieba_name, max_page):
                 is_good
             ))
         conn.commit()
+
+        if page == 1:
+            max_page = int(int(soup.find('a', class_='last')['href'].split('&pn=')[-1]) / 50 + 1)
+            logging.info('Max pages: {}'.format(max_page))
+        if page == max_page:
+            break
+        else:
+            page += 1
     logging.info('Finished getting thread lists')
 
     # 获取帖子内容
@@ -342,7 +351,7 @@ def main(tieba_name, max_page):
 
 
 if __name__ == '__main__':
-    if not sys.argv[2:]:
-        print('Usage: python3 {} <tieba_name> <max_page>'.format(sys.argv[0]))
+    if not sys.argv[1:]:
+        print('Usage: python3 {} <tieba_name>'.format(sys.argv[0]))
         exit(1)
-    main(str(sys.argv[1]), int(sys.argv[2]))
+    main(str(sys.argv[1]))
