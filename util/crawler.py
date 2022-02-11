@@ -45,16 +45,15 @@ def nice_get(url, headers=None, params=None, encoding='utf-8', use_clash=clash_c
         except (ValueError, requests.exceptions.TooManyRedirects, requests.exceptions.SSLError, requests.exceptions.ProxyError) as e:
             session.cookies.clear()
             session.close()
-            if e == ValueError or e == requests.exceptions.TooManyRedirects:
-                if use_clash:
+            if use_clash:
+                if type(e) == ValueError or type(e) == requests.exceptions.TooManyRedirects:
                     logging.warning('Rate limit exceeded, retrying')
                 else:
-                    logging.warning('Rate limit exceeded, sleep for 30s.')
-                    time.sleep(30)
-            else:
-                logging.warning('Bad proxy, picking another one')
-            if use_clash:
+                    logging.warning('Bad proxy, picking another one')
                 clash_control.switch_proxy()
+            else:
+                logging.warning('Rate limit exceeded, sleep for 30s.')
+                time.sleep(30)
             continue
         else:
             return response
