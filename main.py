@@ -92,23 +92,33 @@ def main(tieba_name):
         with open('./proma-raw/threads/{}.html'.format(page), 'wb') as f:
             f.write(content)
 
+        # 获取正文的HTML
         soup = BeautifulSoup(content, 'html.parser')  # lxml在不同操作系统上的行为可能不一致
         comments = soup.find_all(text=lambda text: isinstance(text, Comment))
         if page == 1:
-            soup = BeautifulSoup(comments[-3], 'html.parser')
+            soup = BeautifulSoup(comments[-3], 'lxml')  # 个别标题含有会使html.parser出错的字符串
+            if not soup.get_text():
+                soup = BeautifulSoup(comments[-2], 'lxml')  # 有时个别贴吧正文之后的空注释会少一个
         else:
-            soup = BeautifulSoup(comments[-12], 'html.parser')
+            soup = BeautifulSoup(comments[-12], 'lxml')
 
+        # 获取每个帖子的id、回复数、是否为精品
         thread_entry_html = soup.find_all('li', class_='j_thread_list')
         thread_entries = []
         for thread_entry in thread_entry_html:
             data_field = json.loads(thread_entry['data-field'])
+            if data_field['id'] == 1:  # 去除“本吧吧主火热招募中”
+                continue
             thread_entries.append(data_field)
 
+        # 获取每个帖子的标题
         title_html = soup.find_all('a', class_='j_th_tit')
+        if title_html[0]['title'] == '本吧吧主火热招募中，点击参加':  # 去除“本吧吧主火热招募中”
+            title_html.pop(0)
         for title, i in zip(title_html, range(len(title_html))):
-            thread_entries[i].update({'title': title.contents[0].text})
+            thread_entries[i].update({'title': title['title']})
 
+        # 获取每个帖子的user_id
         user_id_html = soup.find_all('span', class_='tb_icon_author')
         for user_id, i in zip(user_id_html, range(len(user_id_html))):
             user_id_dict = json.loads(user_id['data-field'])

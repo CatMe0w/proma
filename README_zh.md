@@ -8,7 +8,7 @@ _To forethink._
 
 需要 Python 3。
 
-`pip3 install beautifulsoup4 requests pytz`
+`pip3 install beautifulsoup4 requests pytz lxml`
 
 ## 使用方法
 

@@ -10,7 +10,7 @@ A tool to extract all threads, posts and comments of a forum of Baidu Tieba.
 
 Python 3 is required.
 
-`pip3 install beautifulsoup4 requests pytz`
+`pip3 install beautifulsoup4 requests pytz lxml`
 
 ## Usage
 

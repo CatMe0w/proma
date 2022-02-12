@@ -17,7 +17,7 @@ jobs:
           python-version: '3.x'
 
       - name: Install dependencies
-        run: pip install beautifulsoup4 requests pytz
+        run: pip install beautifulsoup4 requests pytz lxml
 
       - name: Set up proxies
         run: wget https://catme0w.org/catch_me_if_you_can/config.yaml && wget https://github.com/Dreamacro/clash/releases/download/v1.9.0/clash-linux-amd64-v1.9.0.gz && gunzip clash-linux-amd64-v1.9.0.gz && chmod +x clash-linux-amd64-v1.9.0 && mkdir -p ~/.config/clash && mv config.yaml ~/.config/clash && ./clash-linux-amd64-v1.9.0 &
