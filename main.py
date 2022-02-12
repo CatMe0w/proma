@@ -158,6 +158,7 @@ def main(tieba_name):
     for thread_id in thread_ids:
         # 获取一个帖子里的所有楼层
         pseudo_page = 1
+        prev_offset = -1  # 用于判断一个帖子是否无法翻页（包含损坏数据）
         next_page_post_id = None
         while True:
             while True:
@@ -246,11 +247,16 @@ def main(tieba_name):
                     if current_page == int(comment_data['page']['total_page']):
                         break
                     if int(comment_data['page']['total_page']) == 0:
-                        logging.critical('Malformed data received. Rate limit probably exceeded. Sleep for 30s.')
+                        logging.warning('Malformed data received. Rate limit probably exceeded. Sleep for 30s.')
                         time.sleep(30)
                         continue
                     else:
                         current_page += 1
+
+            if prev_offset == post_data['page']['offset']:
+                logging.warning('Malformed data received. It seems this thread has corrupted data and it is impossible to get an intact copy.')
+                break
+            prev_offset = post_data['page']['offset']
 
             if int(post_data['page']['total_page']) > int(post_data['page']['current_page']):
                 next_page_post_id = post_data['post_list'][-1]['id']
