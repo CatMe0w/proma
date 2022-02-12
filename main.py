@@ -133,7 +133,7 @@ def main(tieba_name):
         conn.commit()
 
         if page == 1:
-            max_page = int(int(soup.find('a', class_='last')['href'].split('&pn=')[-1]) / 50 + 1)
+            max_page = int(int(response.text.split('" class="last pagination-item')[0].split('&pn=')[-1]) / 50 + 1)  # 用soup搜索class有概率失败，弄个土办法
             logging.info('Max pages: {}'.format(max_page))
         if page == max_page:
             break
