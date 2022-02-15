@@ -300,7 +300,13 @@ def main(tieba_name):
             ('info', '1'),
         )
         logging.info('Current page: albums, thread_id {}'.format(thread_id))
-        response = crawler.nice_get('https://tieba.baidu.com/photo/g/bw/picture/list', headers=crawler.STANDARD_HEADERS, params=params, encoding='gbk')
+        while True:
+            response = crawler.nice_get('https://tieba.baidu.com/photo/g/bw/picture/list', headers=crawler.STANDARD_HEADERS, params=params, encoding='gbk')
+            if '<!DOCTYPE html>' not in response.text:  # 有极小概率返回HTML格式的404页面
+                break
+            else:
+                logging.warning('Bad response, retrying.')
+                continue
         with open('./proma-raw/albums/{}.json'.format(thread_id), 'wb') as f:
             f.write(response.content)
 
