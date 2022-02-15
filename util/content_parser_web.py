@@ -14,7 +14,7 @@ def parse_and_fix(html, content_db, flag_bad_client):
     parsed_data = []
     is_initial = True
     for item in html.contents:
-        if not item.name or item.get('class') == ['edit_font_normal']:  # 纯文本
+        if not item.name or item.get('class') == ['edit_font_normal'] or (item.name == 'span' and item.get('class') is None):  # 纯文本
             if is_initial:
                 parsed_data.append({'type': 'text', 'content': item.string.lstrip()})
             elif parsed_data[-1]['type'] == 'text':
@@ -31,7 +31,7 @@ def parse_and_fix(html, content_db, flag_bad_client):
         elif item.name == 'strong':  # 加粗纯文本
             parsed_data.append({'type': 'text_bold', 'content': item.string})
 
-        elif item.name == 'span' and item['class'] == ['edit_font_color']:  # 红字纯文本
+        elif item.name == 'span' and item.get('class') == ['edit_font_color']:  # 红字纯文本
             parsed_data.append({'type': 'text_red', 'content': item.string})
 
         elif item.name == 'img':
