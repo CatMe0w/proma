@@ -24,6 +24,7 @@ STANDARD_HEADERS = {
 }
 
 session = requests.Session()
+session.timeout = 10
 
 
 def nice_get(url, headers=None, params=None, encoding='utf-8', use_clash=clash_control.USE_CLASH):
