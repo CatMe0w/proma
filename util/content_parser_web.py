@@ -19,7 +19,9 @@ def parse_html(html, flag_bad_client):
                 parsed_data.append({'type': 'text', 'content': item.string})
 
         elif item.name == 'br':  # 换行符
-            if parsed_data[-1]['type'] == 'text':
+            if is_initial:
+                parsed_data.append({'type': 'text', 'content': '\n'})
+            elif parsed_data[-1]['type'] == 'text':
                 parsed_data[-1]['content'] += '\n'
             else:
                 parsed_data.append({'type': 'text', 'content': '\n'})
