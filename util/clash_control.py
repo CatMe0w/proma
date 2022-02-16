@@ -19,7 +19,7 @@ if USE_CLASH:
 
 
 def switch_proxy():
-    next_proxy = proxies.pop(random.randint(0, len(proxies) - 1))
+    next_proxy = proxies[random.randint(0, len(proxies) - 1)]
     data = '{"name":"' + next_proxy + '"}'
     requests.put(CLASH_API_URL + '/proxies/' + PROXY_GROUP_NAME, data=data.encode('utf-8'))
     requests.delete(CLASH_API_URL + '/connections')
