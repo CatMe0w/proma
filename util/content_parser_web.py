@@ -90,6 +90,8 @@ def parse_and_fix(html, content_db, flag_bad_client):
             return None  # 含有以上类型则无需修复
 
     parsed_data = parse_html(html, flag_bad_client)
+    if not parsed_data:
+        return None
 
     extra_data = []
     for item in content_db:
