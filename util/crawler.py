@@ -38,7 +38,7 @@ def nice_get(url, headers=None, params=None, encoding='utf-8', use_clash=clash_c
                 raise ValueError
         except requests.exceptions.Timeout:
             if use_clash:
-                logging.warning('Remote is not responding, retrying')
+                raise requests.exceptions.ProxyError
             else:
                 logging.warning('Remote is not responding, sleep for 30s.')
                 time.sleep(30)
