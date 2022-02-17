@@ -29,14 +29,15 @@ jobs:
         run: tar Jcf proma-raw.tar.xz proma-raw && xz proma.db && xz proma.log
 
       - name: Checksum
-        run: sha256sum proma-raw.tar.xz proma.db.xz proma.log.xz > checksum.txt && cat checksum.txt
+        run: sha256sum proma-raw.tar.xz proma.db.xz proma.log.xz > sha256sums.txt && cat sha256sums.txt
 
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
           name: The Showdown
-          body_path: checksum.txt
+          body_path: sha256sums.txt
           files: |
             proma-raw.tar.xz
             proma.db.xz
             proma.log.xz
+            sha256sums.txt
