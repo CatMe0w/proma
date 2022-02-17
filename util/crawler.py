@@ -43,12 +43,13 @@ def nice_get(url, headers=None, params=None, encoding='utf-8', use_clash=clash_c
                 logging.warning('Remote is not responding, sleep for 30s.')
                 time.sleep(30)
             continue
-        except (ValueError, requests.exceptions.TooManyRedirects, requests.exceptions.SSLError, requests.exceptions.ProxyError) as e:
+        except (ValueError, requests.exceptions.TooManyRedirects, requests.exceptions.SSLError,
+                requests.exceptions.ProxyError, requests.exceptions.ChunkedEncodingError) as e:
             session.cookies.clear()
             session.close()
             if use_clash:
                 if type(e) == ValueError or type(e) == requests.exceptions.TooManyRedirects:
-                    logging.warning('Rate limit exceeded, retrying')
+                    logging.warning('Rate limit exceeded, switching proxy')
                 else:
                     logging.warning('Bad proxy, picking another one')
                 clash_control.switch_proxy()
