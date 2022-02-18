@@ -105,7 +105,7 @@ def parse_and_fix(html, content_db, flag_bad_client):
             try:
                 item['content'] = next(iter_extra_data)['content']
             except StopIteration:
-                if 'qw_cat_' not in content_db:  # 预设神来一句在移动端的格式是image，在网页端是emoticon，排除这个情况以避免过多的无效warning
+                if 'qw_cat_' not in str(content_db):  # 预设神来一句在移动端的格式是image，在网页端是emoticon，实际上没有数据损失，排除这个情况以避免过多的无效warning
                     logging.warning('extra_data exhausted. Using existed db data. db data: {} parsed web data: {}'.format(content_db, parsed_data))
                 return None
 
