@@ -46,6 +46,10 @@ __Note: You must start a Clash instance manually in advance of running `proma`._
 
 If you don’t want to use proxy, set `USE_CLASH` to `False` in `util.clash_control`.
 
+### Download non-text content
+
+See https://github.com/CatMe0w/proma_takeout , a standalone tool to download images.
+
 ## File structures
 
 `proma-raw/`: Raw HTML and JSON files of every page
