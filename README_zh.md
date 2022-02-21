@@ -44,6 +44,10 @@ __注意：必须在运行 `proma` 之前手动开启 Clash。__
 
 若不希望使用代理，请将 `util.clash_control` 中的 `USE_CLASH` 改为 `False`。
 
+### 下载非文本内容
+
+参见 https://github.com/CatMe0w/proma_takeout ，一个用于下载图片的独立工具。
+
 ## 文件结构
 
 `proma-raw/`: 每个页面的原始 HTML 与 JSON
