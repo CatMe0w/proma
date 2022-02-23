@@ -86,7 +86,7 @@ See https://github.com/CatMe0w/proma_takeout , a standalone tool to download ima
 |id|numeric|primary key, not null||
 |floor|numeric|not null||
 |user_id|numeric|not null, foreign key references `user(id)`||
-|content|text||JSON format|
+|content|text||JSON format, see below|
 |time|text|not null|UTC+8, yyyy-MM-dd HH:mm|
 |comment_num|numeric|not null||
 |signature|text||Link of an image|
@@ -99,9 +99,71 @@ See https://github.com/CatMe0w/proma_takeout , a standalone tool to download ima
 |-|-|-|-|
 |id|numeric|primary key, not null||
 |user_id|numeric|not null, foreign key references `user(id)`||
-|content|text||JSON format|
+|content|text||JSON format, see below|
 |time|text|not null|UTC+8, yyyy-MM-dd HH:mm|
 |post_id|numeric|not null, foreign key references `post(id)`||
+
+## `content` format example
+
+This is an example of a `content` which contains all possible fields.
+
+```
+[
+    {
+        "type": "text",
+        "content": "some plaintext\n"
+    },
+    {
+        "type": "text",
+        "content": "some plaintext\n\nwith multiple newlines\n"
+    },
+    {
+        "type": "text_red",
+        "content": "some plaintext but red\n"
+    },
+    {
+        "type": "text_bold",
+        "content": "some plaintext but bold\n"
+    },
+    {
+        "type": "text_bold_red",
+        "content": "some plaintext but bold and red\n"
+    },
+    {
+        "type": "emoticon",
+        "content": {
+            "id": "image_emoticon25",
+            "description": "滑稽"
+        }
+    },
+    {
+        "type": "username",
+        "content": {
+            "text": "@贴吧吧主小管家",
+            "user_id": "167570067"
+        }
+    },
+    {
+        "type": "url",
+        "content": {
+            "url": "https://www.example.com/",
+            "text": "https://www.example.com/"
+        }
+    },
+    {
+        "type": "image",
+        "content": "https://imgsrc.baidu.com/forum/pic/item/1f7150dfb48f8c54f1e3359f2d292df5e0fe7f74.jpg"
+    },
+    {
+        "type": "video",
+        "content": "https://(snip)"
+    },
+    {
+        "type": "audio",
+        "content": "(snip)"
+    }
+]
+```
 
 ## License
 
