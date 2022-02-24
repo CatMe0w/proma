@@ -103,7 +103,7 @@ See https://github.com/CatMe0w/proma_takeout , a standalone tool to download ima
 |time|text|not null|UTC+8, yyyy-MM-dd HH:mm|
 |post_id|numeric|not null, foreign key references `post(id)`||
 
-## `content` format example
+### `content` format example
 
 This is an example of a `content` which contains all possible fields.
 

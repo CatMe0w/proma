@@ -101,7 +101,7 @@ __注意：必须在运行 `proma` 之前手动开启 Clash。__
 |time|text|not null|UTC+8, yyyy-MM-dd HH:mm|
 |post_id|numeric|not null, foreign key references `post(id)`||
 
-## `content` 格式示例
+### `content` 格式示例
 
 以下是一个包含所有可用字段的 `content` 示例。
 
@@ -109,23 +109,23 @@ __注意：必须在运行 `proma` 之前手动开启 Clash。__
 [
     {
         "type": "text",
-        "content": "some plaintext\n"
+        "content": "纯文本\n"
     },
     {
         "type": "text",
-        "content": "some plaintext\n\nwith multiple newlines\n"
+        "content": "有多次换行的\n\n纯文本\n"
     },
     {
         "type": "text_red",
-        "content": "some plaintext but red\n"
+        "content": "红字纯文本\n"
     },
     {
         "type": "text_bold",
-        "content": "some plaintext but bold\n"
+        "content": "加粗纯文本\n"
     },
     {
         "type": "text_bold_red",
-        "content": "some plaintext but bold and red\n"
+        "content": "红字又加粗的纯文本\n"
     },
     {
         "type": "emoticon",
@@ -154,11 +154,11 @@ __注意：必须在运行 `proma` 之前手动开启 Clash。__
     },
     {
         "type": "video",
-        "content": "https://(snip)"
+        "content": "https://(略)"
     },
     {
         "type": "audio",
-        "content": "(snip)"
+        "content": "(略)"
     }
 ]
 ```
