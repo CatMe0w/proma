@@ -50,6 +50,14 @@ If you don’t want to use proxy, set `USE_CLASH` to `False` in `util.clash_cont
 
 See https://github.com/CatMe0w/proma_takeout , a standalone tool to download images.
 
+### Project Ex Nihilo data
+
+All tags, releases, and GitHub Actions workflows in this repository are a part of Project Ex Nihilo, a project that archives all data of a specific forum.
+
+Therefore, these data are not a part of this project. They are kept in order to provide an unbiased source of the data.
+
+If you wish to use, clone or fork this repository, please ignore or remove these data.
+
 ## File structures
 
 `proma-raw/`: Raw HTML and JSON files of every page

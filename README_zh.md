@@ -48,6 +48,14 @@ __注意：必须在运行 `proma` 之前手动开启 Clash。__
 
 参见 https://github.com/CatMe0w/proma_takeout ，一个用于下载图片的独立工具。
 
+### Project Ex Nihilo 数据
+
+本仓库内的所有 tag，release，以及 GitHub Actions workflow 均属于 Project Ex Nihilo，一个针对特定贴吧进行全量存档的工程。
+
+因此，这些数据不是本项目的一部分。保留这些数据是为了提供一个公正的数据源。
+
+如需使用、clone 或 fork 本仓库，请忽略或移除这些数据。
+
 ## 文件结构
 
 `proma-raw/`: 每个页面的原始 HTML 与 JSON
