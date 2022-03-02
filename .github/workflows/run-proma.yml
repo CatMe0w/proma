@@ -23,7 +23,7 @@ jobs:
         run: wget https://catme0w.org/catch_me_if_you_can/config.yaml && wget https://github.com/Dreamacro/clash/releases/download/v1.9.0/clash-linux-amd64-v1.9.0.gz && gunzip clash-linux-amd64-v1.9.0.gz && chmod +x clash-linux-amd64-v1.9.0 && mkdir -p ~/.config/clash && mv config.yaml ~/.config/clash && ./clash-linux-amd64-v1.9.0 &
 
       - name: Run proma
-        run: python main.py fursuit
+        run: python main.py
 
       - name: Package
         run: tar Jcf proma-raw.tar.xz proma-raw && xz proma.db && xz proma.log
