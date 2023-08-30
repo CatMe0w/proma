@@ -2,6 +2,20 @@
 
 中文版请见[这里](https://github.com/CatMe0w/proma/blob/master/README_zh.md)。
 
+**This project is no longer active.**
+
+I've been away from Tieba for a while and have no plans to go back.
+
+Maintaining such a scraper project requires a sustained commitment to catch up with upstream changes.
+
+It may be still working as you read this line of text, but it will likely to be broken in the distant future.
+
+As of this writing (August 2023), I recommend using https://github.com/Starry-OvO/aiotieba . This is probably the most powerful toolkit for Tieba and the guys behind this project rocks. Make sure to check it out.
+
+However, you still are welcome to fork under the terms of the MIT license.
+
+---
+
 _To forethink._
 
 A tool to extract all threads, posts and comments of a forum of Baidu Tieba.
