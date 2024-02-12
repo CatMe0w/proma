@@ -52,13 +52,15 @@ Due to Baidu's extremely strict anti-bot rules, it's highly recommended to use a
 
 ### Proxies
 
-We use [Clash](https://github.com/Dreamacro/clash) to provide a proxy pool for requests of desktop websites.
+We use ~~[Clash](https://github.com/Dreamacro/clash)~~ to provide a proxy pool for requests of desktop websites.
 
 Check `util.clash_control` and edit Clash’s endpoint addresses and other arguments if necessary.
 
 __Note: You must start a Clash instance manually in advance of running `proma`.__
 
 If you don’t want to use proxy, set `USE_CLASH` to `False` in `util.clash_control`.
+
+> [Clash has been deleted from GitHub.](https://news.ycombinator.com/item?id=38126160) You need to find it from other sources.
 
 ### Download non-text content
 

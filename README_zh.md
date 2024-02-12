@@ -50,13 +50,15 @@ _To forethink._
 
 ### 代理
 
-我们使用 [Clash](https://github.com/Dreamacro/clash) 为电脑网页版的请求提供代理池。
+我们使用 ~~[Clash](https://github.com/Dreamacro/clash)~~ 为电脑网页版的请求提供代理池。
 
 检查 `util.clash_control` 并视情况修改 Clash 的连接地址与其他参数。
 
 __注意：必须在运行 `proma` 之前手动开启 Clash。__
 
 若不希望使用代理，请将 `util.clash_control` 中的 `USE_CLASH` 改为 `False`。
+
+> [Clash 已从 GitHub 上删除。](https://news.ycombinator.com/item?id=38126160) 你需要自行从其他地方获取。
 
 ### 下载非文本内容
 
